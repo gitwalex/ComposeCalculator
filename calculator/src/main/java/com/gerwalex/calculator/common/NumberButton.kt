@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,11 +26,13 @@ import com.gerwalex.calculator.ui.theme.lightTransparentYellow
 fun NumberButton(
     modifier: Modifier = Modifier,
     symbol: String,
-    colorBackground: Color,
-    colorFont: Color,
+    colorBackground: Color = MaterialTheme.colorScheme.background,
+    colorFont: Color = MaterialTheme.colorScheme.onBackground,
     onClick: () -> Unit
 ) {
-    Box(contentAlignment = Alignment.Center,
+    val onClick by rememberUpdatedState(onClick)
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .clip(RoundedCornerShape(50.dp))
             .background(color = colorBackground)
@@ -53,5 +58,5 @@ fun ButtonPreview() {
         colorFont = lightFontYellow,
         modifier = Modifier
             .width(70.dp)
-    ){}
+    ) {}
 }

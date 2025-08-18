@@ -8,14 +8,8 @@ import com.gerwalex.calculator.arithmatic.Arithmatic.peek
 import com.gerwalex.calculator.arithmatic.Arithmatic.pop
 import com.gerwalex.calculator.arithmatic.Arithmatic.push
 import kotlin.math.pow
-import kotlin.text.iterator
 
 class CalculateViewModel : ViewModel() {
-    var isDarkEnabled = mutableStateOf(false)
-
-    fun setTheme(isDarkTheme: Boolean) {
-        isDarkEnabled.value = isDarkTheme
-    }
 
     var uiCalculateState by mutableStateOf(UICalculateState())
 
