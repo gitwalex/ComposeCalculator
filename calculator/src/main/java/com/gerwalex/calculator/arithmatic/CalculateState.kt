@@ -2,6 +2,7 @@ package com.gerwalex.calculator.arithmatic
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import com.gerwalex.calculator.common.ActionButtonType
 import java.math.BigDecimal
 
 data class UICalculateState(

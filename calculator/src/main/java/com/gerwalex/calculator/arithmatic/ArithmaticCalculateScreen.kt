@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.gerwalex.calculator.common.ActionButton
+import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButton
 import com.gerwalex.calculator.common.NumberButtonType
 import com.gerwalex.calculator.ui.component.myColors

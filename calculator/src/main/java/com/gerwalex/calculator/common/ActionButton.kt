@@ -1,4 +1,4 @@
-package com.gerwalex.calculator.arithmatic
+package com.gerwalex.calculator.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
