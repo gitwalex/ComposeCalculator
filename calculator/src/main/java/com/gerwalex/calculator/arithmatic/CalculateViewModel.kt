@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
-import java.math.BigDecimal
 
 class CalculateViewModel : ViewModel() {
 
@@ -19,15 +18,16 @@ class CalculateViewModel : ViewModel() {
     fun onAction(action: ActionButtonType) {
         executePendingOperation()
         when (action) {
-            ActionButtonType.ClearAll -> onClearInput()
+            ActionButtonType.ClearAll -> onClearAll()
+            ActionButtonType.ClearInput -> onClearInput()
+            ActionButtonType.BackSpace -> onBackSpace()
             ActionButtonType.Delete -> TODO()
             ActionButtonType.Evaluate -> executePendingOperation()
-            ActionButtonType.ClearInput -> TODO()
             ActionButtonType.ToggleSign -> onToggleSign()
             else -> state = state.copy(
                 pendingOperation = action,
-                currentValue = state.input.toBigDecimal(),
-                input = "",
+                currentValue = state.currentInput,
+                input = "0",
             )
         }
     }
@@ -49,6 +49,24 @@ class CalculateViewModel : ViewModel() {
         state = state.copy(pendingOperation = ActionButtonType.Ignore)
     }
 
+    private fun onClearAll() {
+        state = UICalculateState()
+    }
+
+    private fun onBackSpace() {
+        state = when {
+            state.input.length > 1 -> {
+                state.copy(input = state.input.dropLast(1))
+            }
+
+            state.input.length == 1 -> {
+                state.copy(input = "0", pendingOperation = ActionButtonType.Ignore)
+            }
+
+            else -> state
+        }
+    }
+
     private fun onToggleSign() {
         if (state.pendingOperation == ActionButtonType.Ignore)
             state.copy(currentValue = state.currentValue.negate())
@@ -58,7 +76,7 @@ class CalculateViewModel : ViewModel() {
 
 
     private fun onClearInput() {
-        state = state.copy(currentValue = BigDecimal.ZERO)
+        state = state.copy(input = "")
     }
 
     private fun onAdd() {

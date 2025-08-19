@@ -5,15 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.gerwalex.calculator.arithmatic.CalculatorScreen
 import com.gerwalex.calculator.arithmatic.CalculateViewModel
+import com.gerwalex.calculator.arithmatic.CalculatorScreen
 import com.gerwalex.demo.ui.theme.ComposeCalculatorTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,8 +24,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     CalculatorScreen(
                         modifier = Modifier
-                            .padding(innerPadding)
-                            .border(1.dp, MaterialTheme.colorScheme.outline),
+                            .padding(innerPadding),
                         calculateViewModel = calculateViewModel,
                     )
                 }

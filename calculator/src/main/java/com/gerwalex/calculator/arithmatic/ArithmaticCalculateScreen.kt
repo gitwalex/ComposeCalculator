@@ -25,6 +25,7 @@ import com.gerwalex.calculator.common.NumberButton
 import com.gerwalex.calculator.common.NumberButtonType
 import com.gerwalex.calculator.ui.component.myColors
 import com.gerwalex.calculator.ui.theme.lightFontYellow
+import java.math.BigDecimal
 
 @Composable
 fun CalculatorScreen(
@@ -55,7 +56,7 @@ fun CalculatorScreen(
             .padding(start = 30.dp, end = 30.dp)
     ) {
         val (firstSpacer, secondSpacer, inputText, outputText, buttonC, buttonOpenBracket, buttonClosedBracket, buttonX, buttonDivide, button7, button8, button9, button4, button5, button6, buttonMin) = createRefs()
-        val (thirdSpacer, button1, button2, button3, buttonSum, button0, buttonSquare, buttonDel, buttonEqual, buttonDot, fourthSpacer, fifthSpacer, sixSpacer) = createRefs()
+        val (thirdSpacer, button1, button2, button3, buttonSum, button0, buttonSquare, buttonDel, buttonEqual, buttonDot, fourthSpacer, fifthSpacer, sixSpacer, pendingOperations) = createRefs()
 
         val guidelineTop = createGuidelineFromTop(0.08f)
         createHorizontalChain(
@@ -110,12 +111,12 @@ fun CalculatorScreen(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-            text = state.input, textAlign = TextAlign.End,
+            text = state.result, textAlign = TextAlign.End,
             fontWeight = FontWeight.Black, fontSize = 20.sp
         )
 
         Text(
-            text = state.result,
+            text = state.input,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(end = 20.dp)
@@ -468,7 +469,11 @@ fun CalculatorScreen(
 private fun CalculateScreen() {
     CalculatorScreen(
         modifier = Modifier.fillMaxWidth(),
-        calculateViewModel = CalculateViewModel()
+        state = UICalculateState(
+            input = "123",
+            currentValue = BigDecimal(456),
+            pendingOperation = ActionButtonType.Add
+        )
     )
 
 
