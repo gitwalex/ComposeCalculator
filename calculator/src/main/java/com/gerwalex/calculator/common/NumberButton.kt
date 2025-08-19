@@ -22,10 +22,25 @@ import androidx.compose.ui.unit.sp
 import com.gerwalex.calculator.ui.theme.lightFontYellow
 import com.gerwalex.calculator.ui.theme.lightTransparentYellow
 
+enum class NumberButtonType(val type: String) {
+    One("1"),
+    Two("2"),
+    Three("3"),
+    Four("4"),
+    Five("5"),
+    Six("6"),
+    Seven("7"),
+    Eight("8"),
+    Nine("9"),
+    Zero("0"),
+    Period("."),
+
+}
+
 @Composable
 fun NumberButton(
     modifier: Modifier = Modifier,
-    symbol: String,
+    symbol: NumberButtonType,
     colorBackground: Color = MaterialTheme.colorScheme.background,
     colorFont: Color = MaterialTheme.colorScheme.onBackground,
     onClick: () -> Unit
@@ -41,7 +56,7 @@ fun NumberButton(
             .then(modifier)
     ) {
         Text(
-            text = symbol,
+            text = symbol.type,
             fontWeight = FontWeight.SemiBold,
             fontSize = 30.sp,
             color = colorFont
@@ -53,7 +68,7 @@ fun NumberButton(
 @Composable
 fun ButtonPreview() {
     NumberButton(
-        symbol = "(",
+        symbol = NumberButtonType.One,
         colorBackground = lightTransparentYellow,
         colorFont = lightFontYellow,
         modifier = Modifier

@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.gerwalex.calculator.common.NumberButton
+import com.gerwalex.calculator.common.NumberButtonType
 import com.gerwalex.calculator.ui.component.myColors
 import com.gerwalex.calculator.ui.theme.lightFontYellow
 
@@ -29,21 +28,23 @@ import com.gerwalex.calculator.ui.theme.lightFontYellow
 fun CalculatorScreen(
     modifier: Modifier,
     calculateViewModel: CalculateViewModel,
-) {
+
+    ) {
     CalculatorScreen(
         modifier = modifier,
-        uiCalculateState = calculateViewModel.uiCalculateState,
-        onAction = calculateViewModel::onAction
+        state = calculateViewModel.state,
+        onAction = calculateViewModel::onAction,
+        onNumberClick = calculateViewModel::onAction
     )
 }
 
 @Composable
 fun CalculatorScreen(
     modifier: Modifier,
-    uiCalculateState: UICalculateState,
-    onAction: (CalculateAction) -> Unit
+    state: UICalculateState,
+    onAction: (ActionButtonType) -> Unit = {},
+    onNumberClick: (NumberButtonType) -> Unit = {},
 ) {
-    val onAction by rememberUpdatedState(onAction)
     val contentWidthCommon = 70.dp
     ConstraintLayout(
         modifier = modifier
@@ -107,12 +108,12 @@ fun CalculatorScreen(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-            text = uiCalculateState.input, textAlign = TextAlign.End,
+            text = state.input, textAlign = TextAlign.End,
             fontWeight = FontWeight.Black, fontSize = 20.sp
         )
 
         Text(
-            text = uiCalculateState.result,
+            text = state.result,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(end = 20.dp)
@@ -133,8 +134,8 @@ fun CalculatorScreen(
                     top.linkTo(outputText.bottom)
                     end.linkTo(parent.end)
                 })
-        NumberButton(
-            symbol = "C",
+        ActionButton(
+            symbol = ActionButtonType.ClearAll,
             colorBackground = MaterialTheme.myColors.clearButtonColor,
             colorFont = Color.White,
             modifier = Modifier
@@ -144,10 +145,10 @@ fun CalculatorScreen(
                     top.linkTo(sixSpacer.bottom)
                 }
         ) {
-            onAction(CalculateAction.ClearInput)
+            onAction(ActionButtonType.ClearAll)
         }
-        NumberButton(
-            symbol = "(",
+        ActionButton(
+            symbol = ActionButtonType.ClearInput,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = lightFontYellow,
             modifier = Modifier
@@ -157,10 +158,10 @@ fun CalculatorScreen(
                     bottom.linkTo(buttonC.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("("))
+            onAction(ActionButtonType.ClearInput)
         }
-        NumberButton(
-            symbol = ")",
+        ActionButton(
+            symbol = ActionButtonType.ToggleSign,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = lightFontYellow,
             modifier = Modifier
@@ -170,10 +171,10 @@ fun CalculatorScreen(
                     bottom.linkTo(buttonC.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange(")"))
+            onAction(ActionButtonType.ToggleSign)
         }
-        NumberButton(
-            symbol = "÷",
+        ActionButton(
+            symbol = ActionButtonType.Divide,
             colorBackground = MaterialTheme.myColors.operationButtonColor,
             colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
@@ -183,7 +184,7 @@ fun CalculatorScreen(
                     bottom.linkTo(buttonC.bottom)
                     end.linkTo(parent.end)
                 }) {
-            onAction(CalculateAction.InputChange("/"))
+            onAction(ActionButtonType.Divide)
         }
 
         Spacer(
@@ -197,7 +198,7 @@ fun CalculatorScreen(
                 })
 
         NumberButton(
-            symbol = "7",
+            symbol = NumberButtonType.Seven,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -207,10 +208,10 @@ fun CalculatorScreen(
                     top.linkTo(firstSpacer.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("7"))
+            onNumberClick(NumberButtonType.Seven)
         }
         NumberButton(
-            symbol = "8",
+            symbol = NumberButtonType.Eight,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -220,10 +221,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button7.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("8"))
+            onNumberClick(NumberButtonType.Eight)
         }
         NumberButton(
-            symbol = "9",
+            symbol = NumberButtonType.Nine,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -233,10 +234,10 @@ fun CalculatorScreen(
                     top.linkTo(button7.top)
                 }
         ) {
-            onAction(CalculateAction.InputChange("9"))
+            onNumberClick(NumberButtonType.Nine)
         }
-        NumberButton(
-            symbol = "x",
+        ActionButton(
+            symbol = ActionButtonType.Multiply,
             colorBackground = MaterialTheme.myColors.operationButtonColor,
             colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
@@ -247,7 +248,7 @@ fun CalculatorScreen(
                 }
                 .width(70.dp)
         ) {
-            onAction(CalculateAction.InputChange("*"))
+            onAction(ActionButtonType.Multiply)
         }
         Spacer(
             modifier = Modifier
@@ -259,7 +260,7 @@ fun CalculatorScreen(
                     end.linkTo(parent.end)
                 })
         NumberButton(
-            symbol = "4",
+            symbol = NumberButtonType.Four,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -269,10 +270,10 @@ fun CalculatorScreen(
                     top.linkTo(secondSpacer.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("4"))
+            onNumberClick(NumberButtonType.Four)
         }
         NumberButton(
-            symbol = "5",
+            symbol = NumberButtonType.Five,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -282,10 +283,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button4.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("5"))
+            onNumberClick(NumberButtonType.Five)
         }
         NumberButton(
-            symbol = "6",
+            symbol = NumberButtonType.Six,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -295,10 +296,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button4.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("6"))
+            onNumberClick(NumberButtonType.Six)
         }
-        NumberButton(
-            symbol = "-",
+        ActionButton(
+            symbol = ActionButtonType.Subtract,
             colorBackground = MaterialTheme.myColors.operationButtonColor,
             colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
@@ -309,7 +310,7 @@ fun CalculatorScreen(
                     end.linkTo(parent.end)
                 }
         ) {
-            onAction(CalculateAction.InputChange("-"))
+            onAction(ActionButtonType.Subtract)
         }
         Spacer(
             modifier = Modifier
@@ -321,7 +322,7 @@ fun CalculatorScreen(
                     end.linkTo(parent.end)
                 })
         NumberButton(
-            symbol = "1",
+            symbol = NumberButtonType.One,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -331,10 +332,10 @@ fun CalculatorScreen(
                     top.linkTo(thirdSpacer.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("1"))
+            onNumberClick(NumberButtonType.One)
         }
         NumberButton(
-            symbol = "2",
+            symbol = NumberButtonType.Two,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -344,10 +345,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button1.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("2"))
+            onNumberClick(NumberButtonType.Two)
         }
         NumberButton(
-            symbol = "3",
+            symbol = NumberButtonType.Three,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -357,10 +358,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button1.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("3"))
+            onNumberClick(NumberButtonType.Three)
         }
-        NumberButton(
-            symbol = "+",
+        ActionButton(
+            symbol = ActionButtonType.Add,
             colorBackground = MaterialTheme.myColors.operationButtonColor,
             colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
@@ -371,7 +372,7 @@ fun CalculatorScreen(
                     end.linkTo(parent.end)
                 }
         ) {
-            onAction(CalculateAction.InputChange("+"))
+            onAction(ActionButtonType.Add)
         }
         Spacer(
             modifier = Modifier
@@ -383,7 +384,7 @@ fun CalculatorScreen(
                     end.linkTo(parent.end)
                 })
         NumberButton(
-            symbol = "0",
+            symbol = NumberButtonType.Zero,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -393,10 +394,10 @@ fun CalculatorScreen(
                     top.linkTo(fourthSpacer.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("0"))
+            onNumberClick(NumberButtonType.Zero)
         }
         NumberButton(
-            symbol = ".",
+            symbol = NumberButtonType.Period,
             colorBackground = MaterialTheme.myColors.numberButtonColor,
             colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
@@ -406,10 +407,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button0.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("."))
+            onNumberClick(NumberButtonType.Period)
         }
-        NumberButton(
-            symbol = "^",
+        ActionButton(
+            symbol = ActionButtonType.BackSpace,
             colorBackground = MaterialTheme.myColors.operationButtonColor,
             colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
@@ -419,10 +420,10 @@ fun CalculatorScreen(
                     bottom.linkTo(button0.bottom)
                 }
         ) {
-            onAction(CalculateAction.InputChange("^"))
+            onAction(ActionButtonType.BackSpace)
         }
-        NumberButton(
-            symbol = "←",
+        ActionButton(
+            symbol = ActionButtonType.Delete,
             colorBackground = MaterialTheme.myColors.operationButtonColor,
             colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
@@ -432,7 +433,7 @@ fun CalculatorScreen(
                     start.linkTo(parent.start)
                 }
         ) {
-            onAction(CalculateAction.Delete)
+            onAction(ActionButtonType.Delete)
         }
         Spacer(
             modifier = Modifier
@@ -443,8 +444,8 @@ fun CalculatorScreen(
                     top.linkTo(button0.bottom)
                     end.linkTo(parent.end)
                 })
-        NumberButton(
-            symbol = "=",
+        ActionButton(
+            symbol = ActionButtonType.Evaluate,
             colorBackground = MaterialTheme.myColors.calculateButtonColor,
             colorFont = Color.White,
             modifier = Modifier
@@ -455,7 +456,7 @@ fun CalculatorScreen(
                     bottom.linkTo(buttonDel.bottom)
                 }
         ) {
-            onAction(CalculateAction.Evaluate)
+            onAction(ActionButtonType.Evaluate)
         }
     }
 }

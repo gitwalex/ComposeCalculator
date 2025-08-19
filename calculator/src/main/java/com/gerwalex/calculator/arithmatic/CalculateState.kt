@@ -1,6 +1,20 @@
 package com.gerwalex.calculator.arithmatic
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import java.math.BigDecimal
+
 data class UICalculateState(
     val input: String = "",
-    val result: String = ""
-)
+    val currentValue: BigDecimal = BigDecimal.ZERO,
+    val pendingOperation: ActionButtonType = ActionButtonType.Ignore,
+    var toggleSign: Boolean = false,
+    val error: Int? = null,
+) {
+    val result by derivedStateOf { currentValue.toString() }
+    val currentInput: BigDecimal by derivedStateOf {
+        if (toggleSign)
+            input.toBigDecimal().negate() else input.toBigDecimal()
+
+    }
+}
