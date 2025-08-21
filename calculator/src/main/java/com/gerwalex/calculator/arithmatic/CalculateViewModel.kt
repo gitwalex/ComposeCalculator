@@ -1,12 +1,12 @@
 package com.gerwalex.calculator.arithmatic
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
+import java.math.RoundingMode
 
 class CalculateViewModel : ViewModel() {
 
@@ -20,10 +20,6 @@ class CalculateViewModel : ViewModel() {
             else -> state.input + action.type
         }
         state = state.copy(input = input)
-        Log.d(
-            "NumberButtonAction",
-            "onAction: input=${state.input} - value = ${state.currentInput}"
-        )
     }
 
 
@@ -56,7 +52,6 @@ class CalculateViewModel : ViewModel() {
                 throw IllegalStateException("Invalid operation ${state.pendingOperation}")
             }
         }
-        state = state.copy(pendingOperation = ActionButtonType.None)
     }
 
     private fun onClearAll() {
@@ -86,34 +81,42 @@ class CalculateViewModel : ViewModel() {
 
 
     private fun onClearInput() {
-        state = state.copy(input = "")
+        state = state.copy(input = "0")
     }
 
     private fun onAdd() {
         state =
             state.copy(
-                input = (state.pendingValue + state.currentInput).stripTrailingZeros().toString()
+                input = (state.pendingValue + state.currentInput).stripTrailingZeros().toString(),
+                pendingOperation = ActionButtonType.None
             )
     }
 
     private fun onSubtract() {
         state =
             state.copy(
-                input = (state.pendingValue - state.currentInput).stripTrailingZeros().toString()
+                input = (state.pendingValue - state.currentInput).stripTrailingZeros().toString(),
+                pendingOperation = ActionButtonType.None
             )
     }
 
     private fun onMultiply() {
         state =
             state.copy(
-                input = (state.pendingValue * state.currentInput).stripTrailingZeros().toString()
+                input = state.pendingValue
+                    .multiply(state.currentInput)
+                    .stripTrailingZeros().toString(),
+                pendingOperation = ActionButtonType.None
             )
     }
 
     private fun onDivide() {
         state =
             state.copy(
-                input = (state.pendingValue / state.currentInput).stripTrailingZeros().toString()
+                input = (state.pendingValue
+                    .divide(state.currentInput, 8, RoundingMode.HALF_UP))
+                    .stripTrailingZeros().toString(),
+                pendingOperation = ActionButtonType.None
             )
     }
 
