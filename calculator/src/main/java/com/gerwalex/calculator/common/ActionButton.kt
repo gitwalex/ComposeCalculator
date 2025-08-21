@@ -29,7 +29,7 @@ enum class ActionButtonType(val type: String) {
     ToggleSign("+/-"),
     Evaluate("="),
     Delete("DEL"),
-    Ignore("Ignore"),
+    None(" "),
 }
 
 @Composable

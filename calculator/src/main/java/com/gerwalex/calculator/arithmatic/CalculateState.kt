@@ -7,16 +7,14 @@ import java.math.BigDecimal
 
 data class UICalculateState(
     val input: String = "0",
-    val currentValue: BigDecimal = BigDecimal.ZERO,
-    val pendingOperation: ActionButtonType = ActionButtonType.Ignore,
+    val pendingValue: BigDecimal = BigDecimal.ZERO,
+    val pendingOperation: ActionButtonType = ActionButtonType.None,
     var toggleSign: Boolean = false,
     val error: Int? = null,
 ) {
-    val result by derivedStateOf { currentValue.toString() }
+    val pendingMemory by derivedStateOf { pendingValue.toString() }
     val currentInput: BigDecimal by derivedStateOf {
-        if (input.isNotEmpty()) {
-            if (toggleSign)
-                input.toBigDecimal().negate() else input.toBigDecimal()
-        } else BigDecimal.ZERO
+        if (toggleSign)
+            input.toBigDecimal().negate() else input.toBigDecimal()
     }
 }

@@ -1,5 +1,6 @@
 package com.gerwalex.calculator.arithmatic
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,8 +13,19 @@ class CalculateViewModel : ViewModel() {
 
     var state by mutableStateOf(UICalculateState())
     fun onAction(action: NumberButtonType) {
-        state = state.copy(input = state.input + action.type)
+        val input = when {
+            action == NumberButtonType.Period && state.input.contains('.') -> return
+            action == NumberButtonType.Zero && state.input == "0" -> return
+            state.input == "0" -> action.type
+            else -> state.input + action.type
+        }
+        state = state.copy(input = input)
+        Log.d(
+            "NumberButtonAction",
+            "onAction: input=${state.input} - value = ${state.currentInput}"
+        )
     }
+
 
     fun onAction(action: ActionButtonType) {
         executePendingOperation()
@@ -26,7 +38,7 @@ class CalculateViewModel : ViewModel() {
             ActionButtonType.ToggleSign -> onToggleSign()
             else -> state = state.copy(
                 pendingOperation = action,
-                currentValue = state.currentInput,
+                pendingValue = state.currentInput,
                 input = "0",
             )
         }
@@ -34,19 +46,17 @@ class CalculateViewModel : ViewModel() {
 
     private fun executePendingOperation() {
         when (state.pendingOperation) {
+            ActionButtonType.None -> return // Ignore
             ActionButtonType.Add -> onAdd()
             ActionButtonType.Subtract -> onSubtract()
             ActionButtonType.Multiply -> onMultiply()
             ActionButtonType.Divide -> onDivide()
-            ActionButtonType.Ignore -> {
-                return /*Ignore*/
-            }
 
             else -> {
-                throw IllegalStateException("Invalid operation")
+                throw IllegalStateException("Invalid operation ${state.pendingOperation}")
             }
         }
-        state = state.copy(pendingOperation = ActionButtonType.Ignore)
+        state = state.copy(pendingOperation = ActionButtonType.None)
     }
 
     private fun onClearAll() {
@@ -60,7 +70,7 @@ class CalculateViewModel : ViewModel() {
             }
 
             state.input.length == 1 -> {
-                state.copy(input = "0", pendingOperation = ActionButtonType.Ignore)
+                state.copy(input = "0", pendingOperation = ActionButtonType.None)
             }
 
             else -> state
@@ -68,8 +78,8 @@ class CalculateViewModel : ViewModel() {
     }
 
     private fun onToggleSign() {
-        if (state.pendingOperation == ActionButtonType.Ignore)
-            state.copy(currentValue = state.currentValue.negate())
+        if (state.pendingOperation == ActionButtonType.None)
+            state.copy(pendingValue = state.pendingValue.negate())
         else
             state.copy(toggleSign = !state.toggleSign)
     }
@@ -82,28 +92,28 @@ class CalculateViewModel : ViewModel() {
     private fun onAdd() {
         state =
             state.copy(
-                currentValue = state.currentValue + state.currentInput
+                input = (state.pendingValue + state.currentInput).stripTrailingZeros().toString()
             )
     }
 
     private fun onSubtract() {
         state =
             state.copy(
-                currentValue = state.currentValue - state.currentInput
+                input = (state.pendingValue - state.currentInput).stripTrailingZeros().toString()
             )
     }
 
     private fun onMultiply() {
         state =
             state.copy(
-                currentValue = state.currentValue * state.currentInput
+                input = (state.pendingValue * state.currentInput).stripTrailingZeros().toString()
             )
     }
 
     private fun onDivide() {
         state =
             state.copy(
-                currentValue = state.currentValue / state.currentInput
+                input = (state.pendingValue / state.currentInput).stripTrailingZeros().toString()
             )
     }
 

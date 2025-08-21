@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -105,13 +106,24 @@ fun CalculatorScreen(
         Text(
             modifier = modifier
                 .padding(end = 20.dp)
-                .fillMaxWidth()
                 .constrainAs(inputText) {
                     top.linkTo(guidelineTop)
                     start.linkTo(parent.start)
+//                    end.linkTo(parent.end)
+                },
+            text = state.pendingMemory, textAlign = TextAlign.End,
+            fontWeight = FontWeight.Black, fontSize = 20.sp
+        )
+        Text(
+            modifier = modifier
+//                .padding(end = 20.dp)
+                .wrapContentSize()
+                .constrainAs(pendingOperations) {
+//                    top.linkTo(guidelineTop)
+
                     end.linkTo(parent.end)
                 },
-            text = state.result, textAlign = TextAlign.End,
+            text = state.pendingOperation.type, textAlign = TextAlign.End,
             fontWeight = FontWeight.Black, fontSize = 20.sp
         )
 
@@ -471,7 +483,7 @@ private fun CalculateScreen() {
         modifier = Modifier.fillMaxWidth(),
         state = UICalculateState(
             input = "123",
-            currentValue = BigDecimal(456),
+            pendingValue = BigDecimal(456),
             pendingOperation = ActionButtonType.Add
         )
     )
