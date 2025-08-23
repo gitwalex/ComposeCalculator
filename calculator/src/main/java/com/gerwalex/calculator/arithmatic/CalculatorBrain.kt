@@ -52,19 +52,21 @@ class CalculatorBrain {
      * @param action The [ActionButtonType] representing the action to be performed.
      */
     fun onAction(action: ActionButtonType) {
-        executePendingOperation()
         when (action) {
             ActionButtonType.ClearAll -> onClearAll()
             ActionButtonType.ClearInput -> onClearInput()
             ActionButtonType.BackSpace -> onBackSpace()
             ActionButtonType.Delete -> TODO()
-            ActionButtonType.Evaluate -> executePendingOperation()
+            ActionButtonType.Evaluate -> evaluate()
             ActionButtonType.ToggleSign -> onToggleSign()
-            else -> state = state.copy(
-                pendingOperation = action,
-                pendingValue = state.currentInput,
-                input = "0",
-            )
+            else -> {
+                evaluate()
+                state = state.copy(
+                    pendingOperation = action,
+                    pendingValue = state.currentInput,
+                    input = "0",
+                )
+            }
         }
     }
 
@@ -76,7 +78,7 @@ class CalculatorBrain {
      * If the `pendingOperation` is `ActionButtonType.None`, it does nothing.
      * If an invalid operation is encountered, it throws an `IllegalStateException`.
      */
-    private fun executePendingOperation() {
+    private fun evaluate() {
         when (state.pendingOperation) {
             ActionButtonType.None -> return // Ignore
             ActionButtonType.Add -> onAdd()
@@ -96,10 +98,14 @@ class CalculatorBrain {
 
     /**
      * Handles the backspace action.
-     * If the input is "0", it does nothing.
-     * If the input has more than one character, it removes the last character.
-     * If the input has only one character, it resets the input to the pending memory
-     * and sets the pending operation to None.
+     *
+     * This function modifies the calculator's input based on its current state:
+     * - If the input is "0", it does nothing.
+     * - If the input has more than one character, it removes the last character.
+     * - If there is a pending operation and the input has only one character,
+     *   it restores the `pendingMemory` to the input, clears the `pendingOperation`,
+     *   and resets `pendingValue` to zero.
+     * - Otherwise (input has one character and no pending operation), it sets the input to "0".
      */
     private fun onBackSpace() {
         state = when {
@@ -108,7 +114,7 @@ class CalculatorBrain {
                 state.copy(input = state.input.dropLast(1))
             }
 
-            state.input.length == 1 -> {
+            state.pendingOperation != ActionButtonType.None -> {
                 state.copy(
                     input = state.pendingMemory,
                     pendingOperation = ActionButtonType.None,
@@ -116,7 +122,7 @@ class CalculatorBrain {
                 )
             }
 
-            else -> state
+            else -> state.copy(input = "0")
         }
     }
 

@@ -6,76 +6,120 @@ import org.junit.Test
 import java.math.BigDecimal
 
 class CalculatorBrainTest {
-    private val viewModel: CalculatorBrain = CalculatorBrain()
+    private val brain: CalculatorBrain = CalculatorBrain()
 
     @Test
     fun testOnActionAdd() {
-        viewModel.onAction(ActionButtonType.Add)
-        assert(viewModel.state.pendingOperation == ActionButtonType.Add)
+        brain.onAction(ActionButtonType.Add)
+        assert(brain.state.pendingOperation == ActionButtonType.Add)
     }
 
     @Test
-    fun testOnActionNumber() {
-        viewModel.onAction(NumberButtonType.One)
-        viewModel.onAction(NumberButtonType.Two)
-        viewModel.onAction(NumberButtonType.Period)
-        viewModel.onAction(NumberButtonType.Three)
-        viewModel.onAction(NumberButtonType.Four)
-        assert(viewModel.state.input == "12.34")
-        assert(viewModel.state.currentInput == "12.34".toBigDecimal()) { "Invalid input " }
+    fun inputValueOne() {
+        brain.onAction(NumberButtonType.One)
+        brain.onAction(NumberButtonType.Two)
+        brain.onAction(NumberButtonType.Period)
+        brain.onAction(NumberButtonType.Three)
+        brain.onAction(NumberButtonType.Four)
+        assert(brain.state.input == "12.34")
+        assert(brain.state.currentInput == "12.34".toBigDecimal()) { "Invalid input " }
+
+    }
+
+    @Test
+    fun inputValueTwo() {
+        with(brain) {
+            onAction(NumberButtonType.Five)
+            onAction(NumberButtonType.Period)
+            onAction(NumberButtonType.Six)
+            assert(state.input == "5.6") { "Invalid input ${state.input}" }
+            assert(state.currentInput == "5.6".toBigDecimal()) { "Invalid input ${state.currentInput}" }
+
+        }
     }
 
     @Test
     fun testOnActionAddNumbers() {
-        viewModel.onAction(NumberButtonType.One)
-        viewModel.onAction(NumberButtonType.Two)
-        viewModel.onAction(NumberButtonType.Period)
-        viewModel.onAction(NumberButtonType.Three)
-        viewModel.onAction(NumberButtonType.Four)
-        assert(viewModel.state.input == "12.34")
-        assert(viewModel.state.currentInput == "12.34".toBigDecimal()) { "Invalid input " }
-        viewModel.onAction(ActionButtonType.Add)
-        assert(viewModel.state.pendingOperation == ActionButtonType.Add)
-        assert(viewModel.state.input == "0") { "Invalid input" }
-        assert(viewModel.state.currentInput == BigDecimal.ZERO) { "Invalid current input" }
-        assert(viewModel.state.pendingValue == "12.34".toBigDecimal()) { "Invalid pending Value" }
-        viewModel.onAction(NumberButtonType.Five)
-        viewModel.onAction(NumberButtonType.Period)
-        viewModel.onAction(NumberButtonType.Six)
-        viewModel.onAction(ActionButtonType.Evaluate)
-        assert(viewModel.state.input == "17.94") { "Invalid input, input is ${viewModel.state.input}" }
-
+        with(brain) {
+            inputValueOne()
+            onAction(ActionButtonType.Add)
+            assert(state.pendingOperation == ActionButtonType.Add)
+            assert(state.input == "0") { "Invalid input ${state.input}" }
+            assert(state.pendingValue == "12.34".toBigDecimal()) { "Invalid pending Value ${state.pendingValue}" }
+            inputValueTwo()
+            onAction(ActionButtonType.Evaluate)
+            assert(state.input == "17.94") { "Invalid input, input is ${state.input}" }
+        }
     }
+
     @Test
     fun testOnActionMultiplyNumbers() {
-        viewModel.onAction(NumberButtonType.One)
-        viewModel.onAction(NumberButtonType.Period)
-        viewModel.onAction(NumberButtonType.Two)
-        assert(viewModel.state.input == "1.2")
-        assert(viewModel.state.currentInput == "1.2".toBigDecimal()) { "Invalid input " }
-        viewModel.onAction(ActionButtonType.Multiply)
-        assert(viewModel.state.pendingOperation == ActionButtonType.Multiply)
-        assert(viewModel.state.input == "0") { "Invalid input" }
-        assert(viewModel.state.currentInput == BigDecimal.ZERO) { "Invalid current input" }
-        assert(viewModel.state.pendingValue == "1.2".toBigDecimal()) { "Invalid pending Value" }
-        viewModel.onAction(NumberButtonType.Five)
-        viewModel.onAction(ActionButtonType.Evaluate)
-        assert(viewModel.state.input == "6") { "Invalid input, input is ${viewModel.state.input}" }
-    }
-    @Test
-    fun testOnActionDivideNumbers() {
-        viewModel.onAction(NumberButtonType.One)
-        viewModel.onAction(NumberButtonType.Period)
-        assert(viewModel.state.input == "1.")
-        assert(viewModel.state.currentInput == "1".toBigDecimal()) { "Invalid input " }
-        viewModel.onAction(ActionButtonType.Divide)
-        assert(viewModel.state.pendingOperation == ActionButtonType.Divide)
-        assert(viewModel.state.input == "0") { "Invalid input" }
-        assert(viewModel.state.currentInput == BigDecimal.ZERO) { "Invalid current input" }
-        assert(viewModel.state.pendingValue == "1".toBigDecimal()) { "Invalid pending Value" }
-        viewModel.onAction(NumberButtonType.Five)
-        viewModel.onAction(ActionButtonType.Evaluate)
-        assert(viewModel.state.input == "0.2") { "Invalid input, input is ${viewModel.state.input}" }
+        with(brain) {
+            inputValueOne()
+            onAction(ActionButtonType.Multiply)
+            assert(state.pendingOperation == ActionButtonType.Multiply)
+            assert(state.input == "0") { "Invalid input ${state.input}" }
+            assert(state.currentInput == BigDecimal.ZERO) { "Invalid current input ${state.currentInput}" }
+            assert(state.pendingValue == "12.34".toBigDecimal()) { "Invalid pending Value ${state.pendingValue}" }
+            inputValueTwo()
+            onAction(ActionButtonType.Evaluate)
+            assert(state.input == "69.104") { "Invalid input, input is ${state.input}" }
+        }
     }
 
+    @Test
+    fun testOnActionDivideNumbers() {
+        with(brain) {
+            onAction(NumberButtonType.One)
+            onAction(NumberButtonType.Period)
+            assert(state.input == "1.")
+            assert(state.currentInput == "1".toBigDecimal()) { "Invalid input ${state.currentInput}" }
+            onAction(ActionButtonType.Divide)
+            assert(state.pendingOperation == ActionButtonType.Divide)
+            assert(state.input == "0") { "Invalid input ${state.input}" }
+            assert(state.currentInput == BigDecimal.ZERO) { "Invalid current input ${state.currentInput}" }
+            assert(state.pendingValue == "1".toBigDecimal()) { "Invalid pending Value $state.pendingValue" }
+            onAction(NumberButtonType.Five)
+            onAction(ActionButtonType.Evaluate)
+            assert(state.input == "0.2") { "Invalid input, input is ${state.input}" }
+        }
+    }
+
+    @Test
+    fun testBackSpace() {
+        with(brain) {
+            onAction(NumberButtonType.One)
+            onAction(NumberButtonType.Two)
+            onAction(NumberButtonType.Period)
+            onAction(NumberButtonType.Three)
+            onAction(NumberButtonType.Four)
+            assert(state.input == "12.34")
+            onAction(ActionButtonType.Add)
+            assert(state.pendingOperation == ActionButtonType.Add)
+            assert(state.input == "0") { "Invalid input ${state.input}" }
+            assert(state.pendingMemory == "12.34")
+            onAction(NumberButtonType.Five)
+            onAction(NumberButtonType.Six)
+            assert(state.input == "56") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "5") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "12.34") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "12.3") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "12.") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "12") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "1") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "0") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "0") { "Invalid input, input is ${state.input}" }
+
+
+        }
+
+    }
 }
