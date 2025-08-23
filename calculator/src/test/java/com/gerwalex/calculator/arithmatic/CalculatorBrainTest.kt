@@ -88,19 +88,15 @@ class CalculatorBrainTest {
     @Test
     fun testBackSpace() {
         with(brain) {
-            onAction(NumberButtonType.One)
-            onAction(NumberButtonType.Two)
-            onAction(NumberButtonType.Period)
-            onAction(NumberButtonType.Three)
-            onAction(NumberButtonType.Four)
-            assert(state.input == "12.34")
+            inputValueOne()
             onAction(ActionButtonType.Add)
             assert(state.pendingOperation == ActionButtonType.Add)
             assert(state.input == "0") { "Invalid input ${state.input}" }
             assert(state.pendingMemory == "12.34")
-            onAction(NumberButtonType.Five)
-            onAction(NumberButtonType.Six)
-            assert(state.input == "56") { "Invalid input, input is ${state.input}" }
+            inputValueTwo()
+            assert(state.input == "5.6") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "5.") { "Invalid input, input is ${state.input}" }
             onAction(ActionButtonType.BackSpace)
             assert(state.input == "5") { "Invalid input, input is ${state.input}" }
             onAction(ActionButtonType.BackSpace)
@@ -117,9 +113,15 @@ class CalculatorBrainTest {
             assert(state.input == "0") { "Invalid input, input is ${state.input}" }
             onAction(ActionButtonType.BackSpace)
             assert(state.input == "0") { "Invalid input, input is ${state.input}" }
-
-
         }
+    }
 
+    @Test
+    fun toggleSign() {
+        with(brain) {
+            inputValueOne()
+            onAction(ActionButtonType.ToggleSign)
+            assert(state.input == "-12.34")
+        }
     }
 }

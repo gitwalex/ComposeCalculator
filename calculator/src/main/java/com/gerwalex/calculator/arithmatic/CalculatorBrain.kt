@@ -126,11 +126,14 @@ class CalculatorBrain {
         }
     }
 
+    /**
+     * Toggles the sign of the current input.
+     *
+     * This function negates the `currentInput` in the calculator's state and updates
+     * the `input` field with the string representation of the negated value.
+     */
     private fun onToggleSign() {
-        if (state.pendingOperation == ActionButtonType.None)
-            state.copy(pendingValue = state.pendingValue.negate())
-        else
-            state.copy(toggleSign = !state.toggleSign)
+        state = state.copy(input = state.currentInput.negate().toString())
     }
 
 

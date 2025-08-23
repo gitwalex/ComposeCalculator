@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     CalculatorScreen(
                         modifier = Modifier
                             .padding(innerPadding),
-                        calculatorBrain = calculatorBrain,
+                        brain = calculatorBrain,
                     )
                 }
             }

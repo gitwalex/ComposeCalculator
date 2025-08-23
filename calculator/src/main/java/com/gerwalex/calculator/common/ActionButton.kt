@@ -36,8 +36,8 @@ enum class ActionButtonType(val type: String) {
 fun ActionButton(
     modifier: Modifier = Modifier,
     symbol: ActionButtonType,
-    colorBackground: Color = MaterialTheme.colorScheme.background,
-    colorFont: Color = MaterialTheme.colorScheme.onBackground,
+    colorBackground: Color = MaterialTheme.colorScheme.primary,
+    colorFont: Color = MaterialTheme.colorScheme.onPrimary,
     onClick: () -> Unit
 ) {
     val onClick by rememberUpdatedState(onClick)

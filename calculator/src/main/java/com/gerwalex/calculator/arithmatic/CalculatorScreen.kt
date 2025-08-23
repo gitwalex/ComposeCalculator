@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,14 +32,14 @@ import java.math.BigDecimal
 @Composable
 fun CalculatorScreen(
     modifier: Modifier,
-    calculatorBrain: CalculatorBrain,
+    brain: CalculatorBrain,
 
     ) {
     CalculatorScreen(
         modifier = modifier,
-        state = calculatorBrain.state,
-        onAction = calculatorBrain::onAction,
-        onNumberClick = calculatorBrain::onAction
+        state = brain.state,
+        onAction = brain::onAction,
+        onNumberClick = brain::onAction
     )
 }
 
@@ -49,13 +51,18 @@ fun CalculatorScreen(
     onNumberClick: (NumberButtonType) -> Unit = {},
 ) {
     val contentWidthCommon = 70.dp
+    Card(
+        colors = CardDefaults.cardColors()
+    ) {
+
+    }
     ConstraintLayout(
         modifier = modifier
             .background(Color.LightGray)
 //            .fillMaxSize()
             .padding(start = 30.dp, end = 30.dp)
     ) {
-        val (firstSpacer, secondSpacer, inputText, outputText, buttonC, buttonOpenBracket, buttonClosedBracket, buttonX, buttonDivide, button7, button8, button9, button4, button5, button6, buttonMin) = createRefs()
+        val (firstSpacer, secondSpacer, pendingMemory, inputText, buttonC, buttonOpenBracket, buttonClosedBracket, buttonX, buttonDivide, button7, button8, button9, button4, button5, button6, buttonMin) = createRefs()
         val (thirdSpacer, button1, button2, button3, buttonSum, button0, buttonSquare, buttonDel, buttonEqual, buttonDot, fourthSpacer, fifthSpacer, sixSpacer, pendingOperations) = createRefs()
 
         val guidelineTop = createGuidelineFromTop(0.08f)
@@ -102,24 +109,24 @@ fun CalculatorScreen(
             chainStyle = ChainStyle.SpreadInside
         )
 
-        if (state.pendingOperation == ActionButtonType.None) {
+        if (state.pendingOperation != ActionButtonType.None) {
             Text(
                 modifier = Modifier
-                    .constrainAs(inputText) {
-                        top.linkTo(pendingOperations.top)
-                        end.linkTo(pendingOperations.start)
-//                    end.linkTo(parent.end)
+                    .constrainAs(pendingOperations) {
+                        bottom.linkTo(inputText.top)
+                        end.linkTo(parent.end)
                     },
-                text = state.pendingMemory, textAlign = TextAlign.End,
+                text = state.pendingOperation.type, textAlign = TextAlign.End,
                 fontWeight = FontWeight.Black, fontSize = 20.sp
             )
             Text(
                 modifier = Modifier
-                    .constrainAs(pendingOperations) {
-                        top.linkTo(guidelineTop)
-                        end.linkTo(parent.end)
+                    .padding(end = 20.dp)
+                    .constrainAs(pendingMemory) {
+                        top.linkTo(pendingOperations.top)
+                        end.linkTo(inputText.end)
                     },
-                text = state.pendingOperation.type, textAlign = TextAlign.End,
+                text = state.pendingMemory, textAlign = TextAlign.End,
                 fontWeight = FontWeight.Black, fontSize = 20.sp
             )
         }
@@ -128,11 +135,8 @@ fun CalculatorScreen(
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(end = 20.dp)
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .constrainAs(outputText) {
-                    start.linkTo(parent.start)
-                    top.linkTo(inputText.bottom)
+                .constrainAs(inputText) {
+                    top.linkTo(guidelineTop)
                     end.linkTo(parent.end)
                 }, textAlign = TextAlign.End, fontSize = 25.sp
         )
@@ -142,7 +146,7 @@ fun CalculatorScreen(
                 .fillMaxWidth()
                 .constrainAs(sixSpacer) {
                     start.linkTo(parent.start)
-                    top.linkTo(outputText.bottom)
+                    top.linkTo(inputText.bottom)
                     end.linkTo(parent.end)
                 })
         ActionButton(
