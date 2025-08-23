@@ -101,6 +101,8 @@ class CalculatorBrain {
      *
      * This function modifies the calculator's input based on its current state:
      * - If the input is "0", it does nothing.
+     * - If the input has a length of 2 and the `currentInput` is negative (e.g., "-5"),
+     *   it resets the input to "0".
      * - If the input has more than one character, it removes the last character.
      * - If there is a pending operation and the input has only one character,
      *   it restores the `pendingMemory` to the input, clears the `pendingOperation`,
@@ -110,6 +112,9 @@ class CalculatorBrain {
     private fun onBackSpace() {
         state = when {
             state.input == "0" -> return
+            state.input.length == 2 && state.currentInput < BigDecimal.ZERO -> {
+                state.copy(input = "0")
+            }
             state.input.length > 1 -> {
                 state.copy(input = state.input.dropLast(1))
             }

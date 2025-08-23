@@ -117,6 +117,25 @@ class CalculatorBrainTest {
     }
 
     @Test
+    fun testBackspace2WithToggleSign() {
+        with(brain) {
+            inputValueOne()
+            onAction(ActionButtonType.ToggleSign)
+            assert(state.input == "-12.34")
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "-12.3")
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "-12.")
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "-12")
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "-1")
+            onAction(ActionButtonType.BackSpace)
+            assert(state.input == "0")
+        }
+    }
+
+    @Test
     fun toggleSign() {
         with(brain) {
             inputValueOne()
