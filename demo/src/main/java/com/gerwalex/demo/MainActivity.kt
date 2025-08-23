@@ -4,17 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.gerwalex.calculator.arithmatic.CalculateViewModel
+import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.CalculatorScreen
 import com.gerwalex.demo.ui.theme.ComposeCalculatorTheme
 
 class MainActivity : ComponentActivity() {
-    val calculateViewModel by viewModels<CalculateViewModel>()
+    val calculatorBrain = CalculatorBrain()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     CalculatorScreen(
                         modifier = Modifier
                             .padding(innerPadding),
-                        calculateViewModel = calculateViewModel,
+                        calculatorBrain = calculatorBrain,
                     )
                 }
             }

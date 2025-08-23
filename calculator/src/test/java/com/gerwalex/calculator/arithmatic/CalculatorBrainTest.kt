@@ -5,8 +5,8 @@ import com.gerwalex.calculator.common.NumberButtonType
 import org.junit.Test
 import java.math.BigDecimal
 
-class CalculateViewModelTest {
-    private val viewModel: CalculateViewModel = CalculateViewModel()
+class CalculatorBrainTest {
+    private val viewModel: CalculatorBrain = CalculatorBrain()
 
     @Test
     fun testOnActionAdd() {

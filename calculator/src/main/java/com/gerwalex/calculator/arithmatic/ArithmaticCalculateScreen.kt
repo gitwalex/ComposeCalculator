@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,14 +30,14 @@ import java.math.BigDecimal
 @Composable
 fun CalculatorScreen(
     modifier: Modifier,
-    calculateViewModel: CalculateViewModel,
+    calculatorBrain: CalculatorBrain,
 
     ) {
     CalculatorScreen(
         modifier = modifier,
-        state = calculateViewModel.state,
-        onAction = calculateViewModel::onAction,
-        onNumberClick = calculateViewModel::onAction
+        state = calculatorBrain.state,
+        onAction = calculatorBrain::onAction,
+        onNumberClick = calculatorBrain::onAction
     )
 }
 
@@ -103,30 +102,27 @@ fun CalculatorScreen(
             chainStyle = ChainStyle.SpreadInside
         )
 
-        Text(
-            modifier = modifier
-                .padding(end = 20.dp)
-                .constrainAs(inputText) {
-                    top.linkTo(guidelineTop)
-                    start.linkTo(parent.start)
+        if (state.pendingOperation == ActionButtonType.None) {
+            Text(
+                modifier = Modifier
+                    .constrainAs(inputText) {
+                        top.linkTo(pendingOperations.top)
+                        end.linkTo(pendingOperations.start)
 //                    end.linkTo(parent.end)
-                },
-            text = state.pendingMemory, textAlign = TextAlign.End,
-            fontWeight = FontWeight.Black, fontSize = 20.sp
-        )
-        Text(
-            modifier = modifier
-//                .padding(end = 20.dp)
-                .wrapContentSize()
-                .constrainAs(pendingOperations) {
-//                    top.linkTo(guidelineTop)
-
-                    end.linkTo(parent.end)
-                },
-            text = state.pendingOperation.type, textAlign = TextAlign.End,
-            fontWeight = FontWeight.Black, fontSize = 20.sp
-        )
-
+                    },
+                text = state.pendingMemory, textAlign = TextAlign.End,
+                fontWeight = FontWeight.Black, fontSize = 20.sp
+            )
+            Text(
+                modifier = Modifier
+                    .constrainAs(pendingOperations) {
+                        top.linkTo(guidelineTop)
+                        end.linkTo(parent.end)
+                    },
+                text = state.pendingOperation.type, textAlign = TextAlign.End,
+                fontWeight = FontWeight.Black, fontSize = 20.sp
+            )
+        }
         Text(
             text = state.input,
             fontWeight = FontWeight.Bold,
