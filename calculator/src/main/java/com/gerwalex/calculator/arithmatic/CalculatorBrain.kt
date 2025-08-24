@@ -100,31 +100,31 @@ class CalculatorBrain {
      * Handles the backspace action.
      *
      * This function modifies the calculator's input based on its current state:
-     * - If the input is "0", it does nothing.
+     * - If the input is "0" and there is a pending operation, it restores the `pendingMemory`
+     *   to the input, clears the `pendingOperation`, and resets `pendingValue` to zero.
+     *   This allows the user to correct the second operand of an operation.
      * - If the input has a length of 2 and the `currentInput` is negative (e.g., "-5"),
      *   it resets the input to "0".
      * - If the input has more than one character, it removes the last character.
-     * - If there is a pending operation and the input has only one character,
-     *   it restores the `pendingMemory` to the input, clears the `pendingOperation`,
-     *   and resets `pendingValue` to zero.
-     * - Otherwise (input has one character and no pending operation), it sets the input to "0".
+     * - Otherwise (e.g., input has one character and no pending operation, or input is "0" with no pending operation),
+     *   it sets the input to "0".
      */
     private fun onBackSpace() {
         state = when {
-            state.input == "0" -> return
-            state.input.length == 2 && state.currentInput < BigDecimal.ZERO -> {
-                state.copy(input = "0")
-            }
-            state.input.length > 1 -> {
-                state.copy(input = state.input.dropLast(1))
-            }
-
-            state.pendingOperation != ActionButtonType.None -> {
+            state.input == "0" && state.pendingOperation != ActionButtonType.None -> {
                 state.copy(
                     input = state.pendingMemory,
                     pendingOperation = ActionButtonType.None,
                     pendingValue = BigDecimal.ZERO
                 )
+            }
+
+            state.input.length == 2 && state.currentInput < BigDecimal.ZERO -> {
+                state.copy(input = "0")
+            }
+
+            state.input.length > 1 -> {
+                state.copy(input = state.input.dropLast(1))
             }
 
             else -> state.copy(input = "0")

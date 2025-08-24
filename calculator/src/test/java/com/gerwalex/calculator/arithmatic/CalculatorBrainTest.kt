@@ -100,6 +100,8 @@ class CalculatorBrainTest {
             onAction(ActionButtonType.BackSpace)
             assert(state.input == "5") { "Invalid input, input is ${state.input}" }
             onAction(ActionButtonType.BackSpace)
+            assert(state.input == "0") { "Invalid input, input is ${state.input}" }
+            onAction(ActionButtonType.BackSpace)
             assert(state.input == "12.34") { "Invalid input, input is ${state.input}" }
             onAction(ActionButtonType.BackSpace)
             assert(state.input == "12.3") { "Invalid input, input is ${state.input}" }
