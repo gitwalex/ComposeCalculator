@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,8 +25,6 @@ import com.gerwalex.calculator.common.ActionButton
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButton
 import com.gerwalex.calculator.common.NumberButtonType
-import com.gerwalex.calculator.ui.component.myColors
-import com.gerwalex.calculator.ui.theme.lightFontYellow
 import java.math.BigDecimal
 
 @Composable
@@ -50,7 +48,7 @@ fun CalculatorScreen(
     onAction: (ActionButtonType) -> Unit = {},
     onNumberClick: (NumberButtonType) -> Unit = {},
 ) {
-    val contentWidthCommon = 70.dp
+    70.dp
     Card(
         colors = CardDefaults.cardColors()
     ) {
@@ -59,7 +57,7 @@ fun CalculatorScreen(
     ConstraintLayout(
         modifier = modifier
             .background(Color.LightGray)
-//            .fillMaxSize()
+            .wrapContentSize()
             .padding(start = 30.dp, end = 30.dp)
     ) {
         val (firstSpacer, secondSpacer, pendingMemory, inputText, buttonC, buttonOpenBracket, buttonClosedBracket, buttonX, buttonDivide, button7, button8, button9, button4, button5, button6, buttonMin) = createRefs()
@@ -151,10 +149,7 @@ fun CalculatorScreen(
                 })
         ActionButton(
             symbol = ActionButtonType.ClearAll,
-            colorBackground = MaterialTheme.myColors.clearButtonColor,
-            colorFont = Color.White,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(buttonC) {
                     start.linkTo(parent.start)
                     top.linkTo(sixSpacer.bottom)
@@ -164,10 +159,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.ClearInput,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = lightFontYellow,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(buttonOpenBracket) {
                     top.linkTo(buttonC.top)
                     bottom.linkTo(buttonC.bottom)
@@ -177,10 +169,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.ToggleSign,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = lightFontYellow,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(buttonClosedBracket) {
                     top.linkTo(buttonC.top)
                     bottom.linkTo(buttonC.bottom)
@@ -190,10 +179,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.Divide,
-            colorBackground = MaterialTheme.myColors.operationButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(buttonDivide) {
                     top.linkTo(buttonC.top)
                     bottom.linkTo(buttonC.bottom)
@@ -214,10 +200,7 @@ fun CalculatorScreen(
 
         NumberButton(
             symbol = NumberButtonType.Seven,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(button7) {
                     start.linkTo(parent.start)
                     top.linkTo(firstSpacer.bottom)
@@ -227,10 +210,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Eight,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(button8) {
                     top.linkTo(button7.top)
                     bottom.linkTo(button7.bottom)
@@ -240,10 +220,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Nine,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(button9) {
                     bottom.linkTo(button7.bottom)
                     top.linkTo(button7.top)
@@ -253,15 +230,13 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.Multiply,
-            colorBackground = MaterialTheme.myColors.operationButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
                 .constrainAs(buttonX) {
                     top.linkTo(button7.top)
                     bottom.linkTo(button7.bottom)
                     end.linkTo(firstSpacer.end)
                 }
-                .width(70.dp)
+
         ) {
             onAction(ActionButtonType.Multiply)
         }
@@ -276,10 +251,7 @@ fun CalculatorScreen(
                 })
         NumberButton(
             symbol = NumberButtonType.Four,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(70.dp)
                 .constrainAs(button4) {
                     start.linkTo(parent.start)
                     top.linkTo(secondSpacer.bottom)
@@ -289,10 +261,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Five,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(button5) {
                     top.linkTo(button4.top)
                     bottom.linkTo(button4.bottom)
@@ -302,10 +271,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Six,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(button6) {
                     top.linkTo(button4.top)
                     bottom.linkTo(button4.bottom)
@@ -315,10 +281,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.Subtract,
-            colorBackground = MaterialTheme.myColors.operationButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(buttonMin) {
                     top.linkTo(button4.top)
                     bottom.linkTo(button4.bottom)
@@ -338,10 +301,7 @@ fun CalculatorScreen(
                 })
         NumberButton(
             symbol = NumberButtonType.One,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(button1) {
                     start.linkTo(parent.start)
                     top.linkTo(thirdSpacer.bottom)
@@ -351,10 +311,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Two,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(button2) {
                     top.linkTo(button1.top)
                     bottom.linkTo(button1.bottom)
@@ -364,10 +321,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Three,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(button3) {
                     top.linkTo(button1.top)
                     bottom.linkTo(button1.bottom)
@@ -377,10 +331,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.Add,
-            colorBackground = MaterialTheme.myColors.operationButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(buttonSum) {
                     top.linkTo(button1.top)
                     bottom.linkTo(button1.bottom)
@@ -400,8 +351,6 @@ fun CalculatorScreen(
                 })
         NumberButton(
             symbol = NumberButtonType.Zero,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
                 .width(140.dp)
                 .constrainAs(button0) {
@@ -413,10 +362,7 @@ fun CalculatorScreen(
         }
         NumberButton(
             symbol = NumberButtonType.Period,
-            colorBackground = MaterialTheme.myColors.numberButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorYellow,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(buttonDot) {
                     top.linkTo(button0.top)
                     bottom.linkTo(button0.bottom)
@@ -426,10 +372,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.BackSpace,
-            colorBackground = MaterialTheme.myColors.operationButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(buttonSquare) {
                     top.linkTo(button0.top)
                     bottom.linkTo(button0.bottom)
@@ -439,10 +382,7 @@ fun CalculatorScreen(
         }
         ActionButton(
             symbol = ActionButtonType.Delete,
-            colorBackground = MaterialTheme.myColors.operationButtonColor,
-            colorFont = MaterialTheme.myColors.fontColorPurple,
             modifier = Modifier
-                .width(contentWidthCommon)
                 .constrainAs(buttonDel) {
                     top.linkTo(fifthSpacer.bottom)
                     start.linkTo(parent.start)
@@ -461,8 +401,6 @@ fun CalculatorScreen(
                 })
         ActionButton(
             symbol = ActionButtonType.Evaluate,
-            colorBackground = MaterialTheme.myColors.calculateButtonColor,
-            colorFont = Color.White,
             modifier = Modifier
                 .width(210.dp)
                 .constrainAs(buttonEqual) {

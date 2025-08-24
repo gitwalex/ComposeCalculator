@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -14,7 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.ColorProducer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -34,8 +37,8 @@ enum class ActionButtonType(val type: String) {
 
 @Composable
 fun ActionButton(
-    modifier: Modifier = Modifier,
     symbol: ActionButtonType,
+    modifier: Modifier = Modifier,
     colorBackground: Color = MaterialTheme.colorScheme.primary,
     colorFont: Color = MaterialTheme.colorScheme.onPrimary,
     onClick: () -> Unit
@@ -43,19 +46,44 @@ fun ActionButton(
     val onClick by rememberUpdatedState(onClick)
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .clip(RoundedCornerShape(50.dp))
+        modifier = modifier
+            .width(70.dp)
+            .clip(RoundedCornerShape(30.dp))
             .background(color = colorBackground)
             .clickable { onClick() }
             .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
-            .then(modifier)
     ) {
-        Text(
+        BasicText(
+            modifier = Modifier.align(Alignment.Center),
             text = symbol.type,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 30.sp,
-            color = colorFont
+            maxLines = 1,
+            color = ColorProducer { colorFont },
+            autoSize = TextAutoSize.StepBased(12.sp, maxFontSize = 25.sp)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun ActionButtonAdd() {
+    MaterialTheme {
+        ActionButton(symbol = ActionButtonType.Add) {}
+    }
+}
+
+@Preview
+@Composable
+private fun ActionButtonMultiply() {
+    MaterialTheme {
+        ActionButton(symbol = ActionButtonType.Multiply) {}
+    }
+}
+
+@Preview
+@Composable
+private fun ActionButtonToggle() {
+    MaterialTheme {
+        ActionButton(symbol = ActionButtonType.ToggleSign) {}
     }
 }
 
