@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,13 +46,17 @@ fun ActionButton(
     onClick: () -> Unit
 ) {
     val onClick by rememberUpdatedState(onClick)
+    val haptics = LocalHapticFeedback.current
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .width(70.dp)
             .clip(RoundedCornerShape(30.dp))
             .background(color = colorBackground)
-            .clickable { onClick() }
+            .clickable {
+                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                onClick()
+            }
             .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
     ) {
         BasicText(
