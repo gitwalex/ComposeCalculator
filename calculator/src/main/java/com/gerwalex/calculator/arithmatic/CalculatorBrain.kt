@@ -3,12 +3,14 @@ package com.gerwalex.calculator.arithmatic
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CalculatorBrain {
+class CalculatorBrain(savedStateHandle: SavedStateHandle) : ViewModel() {
 
 
     var state by mutableStateOf(UICalculateState())
