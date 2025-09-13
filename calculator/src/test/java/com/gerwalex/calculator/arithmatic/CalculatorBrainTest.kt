@@ -8,6 +8,7 @@ import java.math.BigDecimal
 class CalculatorBrainTest {
     private val brain: CalculatorBrain = CalculatorBrain()
 
+
     @Test
     fun testOnActionAdd() {
         brain.onAction(ActionButtonType.Add)

@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.CalculatorScreen
 import com.gerwalex.demo.ui.theme.ComposeCalculatorTheme
 
 class MainActivity : ComponentActivity() {
-    val calculatorBrain = CalculatorBrain()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
