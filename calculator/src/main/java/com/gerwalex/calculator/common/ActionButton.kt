@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,7 +20,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 enum class ActionButtonType(val type: String) {
     Add("+"),
@@ -64,7 +62,6 @@ fun ActionButton(
             text = symbol.type,
             maxLines = 1,
             color = ColorProducer { colorFont },
-            autoSize = TextAutoSize.StepBased(12.sp, maxFontSize = 25.sp)
         )
     }
 }
