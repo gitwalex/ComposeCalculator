@@ -49,16 +49,15 @@ fun NumberButton(
     val haptics = LocalHapticFeedback.current
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .width(70.dp)
-            .clip(RoundedCornerShape(50.dp))
+            .clip(RoundedCornerShape(20.dp))
             .background(color = colorBackground)
             .clickable {
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                 onClick()
             }
             .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
-            .then(modifier)
     ) {
         Text(
             text = symbol.type,

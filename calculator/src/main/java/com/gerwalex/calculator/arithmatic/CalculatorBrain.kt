@@ -26,6 +26,10 @@ class CalculatorBrain() : ViewModel() {
      * @param action The [NumberButtonType] representing the pressed number button.
      */
     fun onAction(action: NumberButtonType) {
+        if (state.pendingOperation == ActionButtonType.ClearInput) {
+            state = state.copy(input = "0")
+
+        }
         val input = when {
             action == NumberButtonType.Period && state.input.contains('.') -> return
             action == NumberButtonType.Zero && state.input == "0" -> return
@@ -58,7 +62,11 @@ class CalculatorBrain() : ViewModel() {
             ActionButtonType.ClearInput -> onClearInput()
             ActionButtonType.BackSpace -> onBackSpace()
             ActionButtonType.Delete -> TODO()
-            ActionButtonType.Evaluate -> evaluate()
+            ActionButtonType.Evaluate -> {
+                evaluate()
+                state = state.copy(pendingOperation = ActionButtonType.ClearInput)
+            }
+
             ActionButtonType.ToggleSign -> onToggleSign()
             else -> {
                 evaluate()
@@ -81,7 +89,7 @@ class CalculatorBrain() : ViewModel() {
      */
     private fun evaluate() {
         when (state.pendingOperation) {
-            ActionButtonType.None -> return // Ignore
+            ActionButtonType.None -> state.copy(pendingValue = BigDecimal.ZERO)
             ActionButtonType.Add -> onAdd()
             ActionButtonType.Subtract -> onSubtract()
             ActionButtonType.Multiply -> onMultiply()

@@ -83,6 +83,23 @@ class CalculatorBrainTest {
             onAction(NumberButtonType.Five)
             onAction(ActionButtonType.Evaluate)
             assert(state.input == "0.2") { "Invalid input, input is ${state.input}" }
+            onAction(NumberButtonType.Two)
+            assert(state.input == "2") { "Invalid input, input is ${state.input}" }
+        }
+    }
+
+    @Test
+    fun testTwoDifferentCalculations() {
+        with(brain) {
+            onAction(NumberButtonType.One)
+            onAction(ActionButtonType.Add)
+            assert(state.pendingOperation == ActionButtonType.Add)
+            onAction(NumberButtonType.Five)
+            onAction(ActionButtonType.Evaluate)
+            assert(state.pendingOperation == ActionButtonType.ClearInput) { "Invalid current input ${state.currentInput}" }
+            assert(state.input == "6") { "Invalid input, input is ${state.input}" }
+            onAction(NumberButtonType.Two)
+            assert(state.input == "2") { "Invalid input, input is ${state.input}" }
         }
     }
 
