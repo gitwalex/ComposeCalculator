@@ -9,7 +9,7 @@ import com.gerwalex.calculator.common.NumberButtonType
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CalculatorBrain() : ViewModel() {
+class CalculatorBrain : ViewModel() {
 
 
     var state by mutableStateOf(UICalculateState())
@@ -31,6 +31,11 @@ class CalculatorBrain() : ViewModel() {
 
         }
         val input = when {
+            action == NumberButtonType.BackSpace -> {
+                if (state.input.length > 1)
+                    state.input.dropLast(1) else "0"
+            }
+
             action == NumberButtonType.Period && state.input.contains('.') -> return
             action == NumberButtonType.Zero && state.input == "0" -> return
             state.input == "0" -> action.type
@@ -89,15 +94,21 @@ class CalculatorBrain() : ViewModel() {
      */
     private fun evaluate() {
         when (state.pendingOperation) {
-            ActionButtonType.None -> state.copy(pendingValue = BigDecimal.ZERO)
+            ActionButtonType.ClearInput -> state = state.copy(pendingValue = BigDecimal.ZERO)
             ActionButtonType.Add -> onAdd()
             ActionButtonType.Subtract -> onSubtract()
             ActionButtonType.Multiply -> onMultiply()
             ActionButtonType.Divide -> onDivide()
-
-            else -> {
-                throw IllegalStateException("Invalid operation ${state.pendingOperation}")
+            ActionButtonType.ClearAll -> onClearAll()
+            ActionButtonType.BackSpace -> onBackSpace()
+            ActionButtonType.Delete -> TODO()
+            ActionButtonType.Evaluate -> {
+                evaluate()
+                state = state.copy(pendingOperation = ActionButtonType.ClearInput)
             }
+
+            ActionButtonType.ToggleSign -> state = state.copy(pendingValue = -state.pendingValue)
+            ActionButtonType.None -> TODO()
         }
     }
 

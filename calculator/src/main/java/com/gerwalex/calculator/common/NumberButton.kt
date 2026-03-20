@@ -1,19 +1,16 @@
 package com.gerwalex.calculator.common
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -21,6 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gerwalex.calculator.CalculatorLayout
+import com.gerwalex.calculator.arithmatic.CalculatorBrain
+import com.gerwalex.calculator.arithmatic.UICalculateState
+import com.gerwalex.calculator.ui.theme.CalculatorAppTheme
+import java.math.BigDecimal
 
 enum class NumberButtonType(val type: String) {
     One("1"),
@@ -34,6 +37,8 @@ enum class NumberButtonType(val type: String) {
     Nine("9"),
     Zero("0"),
     Period("."),
+    BackSpace("⌫"),
+
 
 }
 
@@ -41,23 +46,24 @@ enum class NumberButtonType(val type: String) {
 fun NumberButton(
     symbol: NumberButtonType,
     modifier: Modifier = Modifier,
-    colorBackground: Color = MaterialTheme.colorScheme.background,
-    colorFont: Color = MaterialTheme.colorScheme.onBackground,
-    onClick: () -> Unit
+    colorFont: Color = MaterialTheme.colorScheme.onPrimary,
+    onNumber: (NumberButtonType) -> Unit,
 ) {
-    val onClick by rememberUpdatedState(onClick)
     val haptics = LocalHapticFeedback.current
-    Box(
-        contentAlignment = Alignment.Center,
+    Button(
+        onClick = {
+            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            // Oder HapticFeedbackType.TextHandleMove für ein kürzeres Tippen
+
+            onNumber(symbol)
+        },
         modifier = modifier
-            .width(70.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(color = colorBackground)
-            .clickable {
-                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                onClick()
-            }
-            .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
+            .padding(4.dp)
+            .aspectRatio(1f), // Sorgt für quadratische Form
+        shape = CircleShape, // Oder RoundedCornerShape(16.dp) für M3 Look
+//        colors = ButtonDefaults.buttonColors(
+//            containerColor = LocalColors.current.numberButtonColor
+//        )
     ) {
         Text(
             text = symbol.type,
@@ -65,6 +71,28 @@ fun NumberButton(
             fontSize = 30.sp,
             color = colorFont
         )
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun CalculatorNumberButtonDialog() {
+    val brain = viewModel<CalculatorBrain>().also {
+        it.state = UICalculateState(
+            input = "123",
+            pendingValue = BigDecimal(456),
+            pendingOperation = ActionButtonType.Add
+        )
+    }
+    CalculatorAppTheme {
+        Surface {
+            CalculatorLayout(
+                state = brain.state,
+                onAction = {},
+                onNumber = {}
+            )
+        }
     }
 }
 

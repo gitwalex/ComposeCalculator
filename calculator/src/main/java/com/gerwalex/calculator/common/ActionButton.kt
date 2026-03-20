@@ -3,11 +3,13 @@ package com.gerwalex.calculator.common
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -18,8 +20,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gerwalex.calculator.CalculatorLayout
+import com.gerwalex.calculator.arithmatic.CalculatorBrain
+import com.gerwalex.calculator.arithmatic.UICalculateState
+import java.math.BigDecimal
 
 enum class ActionButtonType(val type: String) {
     Add("+"),
@@ -41,27 +50,50 @@ fun ActionButton(
     modifier: Modifier = Modifier,
     colorBackground: Color = MaterialTheme.colorScheme.primary,
     colorFont: Color = MaterialTheme.colorScheme.onPrimary,
-    onClick: () -> Unit
+    onAction: (ActionButtonType) -> Unit
 ) {
-    val onClick by rememberUpdatedState(onClick)
+    val onClick by rememberUpdatedState(onAction)
     val haptics = LocalHapticFeedback.current
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .width(70.dp)
+            .height(48.dp)
             .clip(RoundedCornerShape(30.dp))
             .background(color = colorBackground)
             .clickable {
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                onClick()
+                onClick(symbol)
             }
             .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
     ) {
         BasicText(
             modifier = Modifier.align(Alignment.Center),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+            ),
             text = symbol.type,
             maxLines = 1,
             color = ColorProducer { colorFont },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun CalculatorActionButtonDialog() {
+    val brain = viewModel<CalculatorBrain>().also {
+        it.state = UICalculateState(
+            input = "123",
+            pendingValue = BigDecimal(456),
+            pendingOperation = ActionButtonType.Add
+        )
+    }
+    Surface {
+        CalculatorLayout(
+            state = brain.state,
+            onAction = {},
+            onNumber = {}
         )
     }
 }
