@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.devtools.ksp)
     id("maven-publish")
 }
 
@@ -55,14 +56,37 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
+    implementation(libs.material)
+    debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.tooling.preview)
 
-    implementation(libs.material)
     testImplementation(libs.junit)
+    testImplementation(libs.slf4j.simple)
+    testImplementation(libs.bundles.test)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.mockk)
+    testImplementation(libs.roboelectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation(libs.androidx.ui.tooling)
+    androidTestImplementation(composeBom)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.test.espresso)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent)
+
+
+    //Koin
+    implementation(platform(libs.koin.bom))
+    ksp(libs.koin.ksp.compiler)
+    implementation(libs.bundles.koin)
+    testImplementation(platform(libs.koin.bom))
+    testImplementation(libs.koin.test)
+    testImplementation(libs.koin.test.junit4)
+    androidTestImplementation(platform(libs.koin.bom))
+    androidTestImplementation(libs.koin.test)
+    androidTestImplementation(libs.koin.test.android)
+    androidTestImplementation(libs.koin.test.junit4)
+
 }
 publishing {
 
