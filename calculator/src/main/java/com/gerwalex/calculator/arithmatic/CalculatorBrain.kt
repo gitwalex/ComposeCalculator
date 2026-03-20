@@ -1,66 +1,46 @@
 package com.gerwalex.calculator.arithmatic
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 class CalculatorBrain : ViewModel() {
 
+    // Interner MutableStateFlow
+    private val _state = MutableStateFlow(UICalculateState())
 
-    var state by mutableStateOf(UICalculateState())
+    // Externer schreibgeschützter Flow für die UI
+    val state: StateFlow<UICalculateState> = _state.asStateFlow()
 
-    /**
-     * Handles the action when a number button is pressed.
-     *
-     * It updates the current input in the calculator's state based on the pressed number button.
-     * - If the period button is pressed and the input already contains a period, it does nothing.
-     * - If the zero button is pressed and the input is already "0", it does nothing.
-     * - If the input is "0", it replaces "0" with the pressed number.
-     * - Otherwise, it appends the pressed number to the current input.
-     *
-     * @param action The [NumberButtonType] representing the pressed number button.
-     */
     fun onAction(action: NumberButtonType) {
-        if (state.pendingOperation == ActionButtonType.ClearInput) {
-            state = state.copy(input = "0")
+        _state.update { currentState ->
+            var workingInput = currentState.input
 
-        }
-        val input = when {
-            action == NumberButtonType.BackSpace -> {
-                if (state.input.length > 1)
-                    state.input.dropLast(1) else "0"
+            // Logik für ClearInput-Zustand
+            if (currentState.pendingOperation == ActionButtonType.ClearInput) {
+                workingInput = "0"
             }
 
-            action == NumberButtonType.Period && state.input.contains('.') -> return
-            action == NumberButtonType.Zero && state.input == "0" -> return
-            state.input == "0" -> action.type
-            else -> state.input + action.type
+            val newInput = when {
+                action == NumberButtonType.BackSpace -> {
+                    if (workingInput.length > 1) workingInput.dropLast(1) else "0"
+                }
+
+                action == NumberButtonType.Period && workingInput.contains('.') -> return@update currentState
+                action == NumberButtonType.Zero && workingInput == "0" -> return@update currentState
+                workingInput == "0" -> action.type
+                else -> workingInput + action.type
+            }
+
+            currentState.copy(input = newInput)
         }
-        state = state.copy(input = input)
     }
 
-
-    /**
-     * Handles an action button press.
-     *
-     * This function first executes any pending operation. Then, based on the `action` provided,
-     * it performs a specific calculator action:
-     * - **ClearAll**: Resets the calculator to its initial state.
-     * - **ClearInput**: Clears the current input field.
-     * - **BackSpace**: Removes the last character from the input field.
-     * - **Delete**: (Not yet implemented - marked as TODO)
-     * - **Evaluate**: Executes the pending operation.
-     * - **ToggleSign**: Changes the sign of the current input or the pending value.
-     * - **Other Actions (Add, Subtract, Multiply, Divide)**: Sets the current action as the pending
-     *   operation, stores the current input as the pending value, and resets the input field to "0".
-     *
-     * @param action The [ActionButtonType] representing the action to be performed.
-     */
     fun onAction(action: ActionButtonType) {
         when (action) {
             ActionButtonType.ClearAll -> onClearAll()
@@ -69,32 +49,26 @@ class CalculatorBrain : ViewModel() {
             ActionButtonType.Delete -> TODO()
             ActionButtonType.Evaluate -> {
                 evaluate()
-                state = state.copy(pendingOperation = ActionButtonType.ClearInput)
+                _state.update { it.copy(pendingOperation = ActionButtonType.ClearInput) }
             }
-
             ActionButtonType.ToggleSign -> onToggleSign()
             else -> {
                 evaluate()
-                state = state.copy(
-                    pendingOperation = action,
-                    pendingValue = state.currentInput,
-                    input = "0",
-                )
+                _state.update { currentState ->
+                    currentState.copy(
+                        pendingOperation = action,
+                        pendingValue = currentState.currentInput,
+                        input = "0",
+                    )
+                }
             }
         }
     }
 
-    /**
-     * Executes the pending arithmetic operation based on the current calculator state.
-     *
-     * This function checks the `pendingOperation` in the `state` and calls the
-     * corresponding arithmetic function (e.g., `onAdd()`, `onSubtract()`).
-     * If the `pendingOperation` is `ActionButtonType.None`, it does nothing.
-     * If an invalid operation is encountered, it throws an `IllegalStateException`.
-     */
     private fun evaluate() {
-        when (state.pendingOperation) {
-            ActionButtonType.ClearInput -> state = state.copy(pendingValue = BigDecimal.ZERO)
+        val currentOp = _state.value.pendingOperation
+        when (currentOp) {
+            ActionButtonType.ClearInput -> _state.update { it.copy(pendingValue = BigDecimal.ZERO) }
             ActionButtonType.Add -> onAdd()
             ActionButtonType.Subtract -> onSubtract()
             ActionButtonType.Multiply -> onMultiply()
@@ -104,103 +78,85 @@ class CalculatorBrain : ViewModel() {
             ActionButtonType.Delete -> TODO()
             ActionButtonType.Evaluate -> {
                 evaluate()
-                state = state.copy(pendingOperation = ActionButtonType.ClearInput)
+                _state.update { it.copy(pendingOperation = ActionButtonType.ClearInput) }
             }
 
-            ActionButtonType.ToggleSign -> state = state.copy(pendingValue = -state.pendingValue)
-            ActionButtonType.None -> TODO()
+            ActionButtonType.ToggleSign -> _state.update { it.copy(pendingValue = -it.pendingValue) }
+            ActionButtonType.None -> { /* Nichts zu tun */
+            }
         }
     }
 
     private fun onClearAll() {
-        state = UICalculateState()
+        _state.value = UICalculateState()
     }
 
-    /**
-     * Handles the backspace action.
-     *
-     * This function modifies the calculator's input based on its current state:
-     * - If the input is "0" and there is a pending operation, it restores the `pendingMemory`
-     *   to the input, clears the `pendingOperation`, and resets `pendingValue` to zero.
-     *   This allows the user to correct the second operand of an operation.
-     * - If the input has a length of 2 and the `currentInput` is negative (e.g., "-5"),
-     *   it resets the input to "0".
-     * - If the input has more than one character, it removes the last character.
-     * - Otherwise (e.g., input has one character and no pending operation, or input is "0" with no pending operation),
-     *   it sets the input to "0".
-     */
     private fun onBackSpace() {
-        state = when {
-            state.input == "0" && state.pendingOperation != ActionButtonType.None -> {
-                state.copy(
-                    input = state.pendingMemory,
-                    pendingOperation = ActionButtonType.None,
-                    pendingValue = BigDecimal.ZERO
-                )
-            }
+        _state.update { currentState ->
+            when {
+                currentState.input == "0" && currentState.pendingOperation != ActionButtonType.None -> {
+                    currentState.copy(
+                        input = currentState.pendingMemory,
+                        pendingOperation = ActionButtonType.None,
+                        pendingValue = BigDecimal.ZERO
+                    )
+                }
 
-            state.input.length == 2 && state.currentInput < BigDecimal.ZERO -> {
-                state.copy(input = "0")
-            }
+                currentState.input.length == 2 && currentState.currentInput < BigDecimal.ZERO -> {
+                    currentState.copy(input = "0")
+                }
 
-            state.input.length > 1 -> {
-                state.copy(input = state.input.dropLast(1))
-            }
+                currentState.input.length > 1 -> {
+                    currentState.copy(input = currentState.input.dropLast(1))
+                }
 
-            else -> state.copy(input = "0")
+                else -> currentState.copy(input = "0")
+            }
         }
     }
 
-    /**
-     * Toggles the sign of the current input.
-     *
-     * This function negates the `currentInput` in the calculator's state and updates
-     * the `input` field with the string representation of the negated value.
-     */
     private fun onToggleSign() {
-        state = state.copy(input = state.currentInput.negate().toString())
+        _state.update { it.copy(input = it.currentInput.negate().toString()) }
     }
 
-
     private fun onClearInput() {
-        state = state.copy(input = "0")
+        _state.update { it.copy(input = "0") }
     }
 
     private fun onAdd() {
-        state =
-            state.copy(
-                input = (state.pendingValue + state.currentInput).stripTrailingZeros().toString(),
+        _state.update { s ->
+            s.copy(
+                input = (s.pendingValue + s.currentInput).stripTrailingZeros().toString(),
                 pendingOperation = ActionButtonType.None
             )
+        }
     }
 
     private fun onSubtract() {
-        state =
-            state.copy(
-                input = (state.pendingValue - state.currentInput).stripTrailingZeros().toString(),
+        _state.update { s ->
+            s.copy(
+                input = (s.pendingValue - s.currentInput).stripTrailingZeros().toString(),
                 pendingOperation = ActionButtonType.None
             )
+        }
     }
 
     private fun onMultiply() {
-        state =
-            state.copy(
-                input = state.pendingValue
-                    .multiply(state.currentInput)
-                    .stripTrailingZeros().toString(),
+        _state.update { s ->
+            s.copy(
+                input = s.pendingValue.multiply(s.currentInput).stripTrailingZeros().toString(),
                 pendingOperation = ActionButtonType.None
             )
+        }
     }
 
     private fun onDivide() {
-        state =
-            state.copy(
-                input = (state.pendingValue
-                    .divide(state.currentInput, 8, RoundingMode.HALF_UP))
-                    .stripTrailingZeros().toString(),
+        _state.update { s ->
+            val result = s.pendingValue.divide(s.currentInput, 8, RoundingMode.HALF_UP)
+            s.copy(
+                input = result.stripTrailingZeros().toString(),
                 pendingOperation = ActionButtonType.None
             )
+        }
     }
-
-
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -23,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import com.gerwalex.calculator.common.ActionButton
@@ -39,9 +37,10 @@ fun CalculatorContent(
     brain: CalculatorBrain,
     onResult: (BigDecimal) -> Unit = {}
 ) {
+    val state by brain.state.collectAsStateWithLifecycle()
     val onResult by rememberUpdatedState(onResult)
-    LaunchedEffect(brain) {
-        snapshotFlow { brain.state }.collect { onResult(it.currentInput) }
+    LaunchedEffect(state) {
+        onResult(state.currentInput)
     }
 //    with(brain) {
 //        ConstraintLayout(
@@ -408,7 +407,7 @@ fun CalculatorContent(
 //fun CalculartorCon(modifier: Modifier = Modifier) {
 //    val brain = viewModel<CalculatorBrain>()
     CalculatorLayout(
-        state = brain.state, onAction = {
+        state = state, onAction = {
             brain.onAction(it)
         },
         onNumber = {
@@ -429,7 +428,6 @@ fun CalculatorLayout(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .padding(horizontal = 30.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp) // Abstand zwischen den Zeilen
     ) {
@@ -585,16 +583,15 @@ fun CalculatorRow(content: @Composable RowScope.() -> Unit) {
 @Preview
 @Composable
 private fun CalculaterContent() {
-    val brain = viewModel<CalculatorBrain>().also {
-        it.state = UICalculateState(
-            input = "123",
-            pendingValue = BigDecimal(456),
-            pendingOperation = ActionButtonType.Add
-        )
-    }
+    val state = UICalculateState(
+        input = "123",
+        pendingValue = BigDecimal(456),
+        pendingOperation = ActionButtonType.Add
+    )
+
     Surface {
         CalculatorLayout(
-            state = brain.state,
+            state = state,
             onAction = {},
             onNumber = {}
         )

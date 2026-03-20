@@ -24,9 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gerwalex.calculator.CalculatorLayout
-import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import java.math.BigDecimal
 
@@ -82,16 +80,15 @@ fun ActionButton(
 @Preview
 @Composable
 private fun CalculatorActionButtonDialog() {
-    val brain = viewModel<CalculatorBrain>().also {
-        it.state = UICalculateState(
+    val state = UICalculateState(
             input = "123",
             pendingValue = BigDecimal(456),
             pendingOperation = ActionButtonType.Add
         )
-    }
+
     Surface {
         CalculatorLayout(
-            state = brain.state,
+            state = state,
             onAction = {},
             onNumber = {}
         )

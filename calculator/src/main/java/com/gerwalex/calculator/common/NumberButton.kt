@@ -18,11 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gerwalex.calculator.CalculatorLayout
-import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.UICalculateState
-import com.gerwalex.calculator.ui.theme.CalculatorAppTheme
 import java.math.BigDecimal
 
 enum class NumberButtonType(val type: String) {
@@ -78,21 +75,18 @@ fun NumberButton(
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun CalculatorNumberButtonDialog() {
-    val brain = viewModel<CalculatorBrain>().also {
-        it.state = UICalculateState(
-            input = "123",
-            pendingValue = BigDecimal(456),
-            pendingOperation = ActionButtonType.Add
+    val state = UICalculateState(
+        input = "123",
+        pendingValue = BigDecimal(456),
+        pendingOperation = ActionButtonType.Add
+    )
+
+    Surface {
+        CalculatorLayout(
+            state = state,
+            onAction = {},
+            onNumber = {}
         )
-    }
-    CalculatorAppTheme {
-        Surface {
-            CalculatorLayout(
-                state = brain.state,
-                onAction = {},
-                onNumber = {}
-            )
-        }
     }
 }
 

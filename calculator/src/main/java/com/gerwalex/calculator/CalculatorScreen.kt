@@ -13,12 +13,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.UICalculateState
@@ -33,11 +34,11 @@ fun CalculatorScreen(
     onResult: (BigDecimal) -> Unit
 ) {
     val brain: CalculatorBrain = viewModel()
-    LaunchedEffect(brain) {
-        brain.state = UICalculateState(
-            pendingValue = initialValue,
-        )
-    }
+    //    LaunchedEffect(state) {
+//        state = UICalculateState(
+//            pendingValue = initialValue,
+//        )
+//    }
     CalculatorContent(modifier = modifier, brain = brain, onResult = onResult)
 }
 
@@ -66,11 +67,11 @@ fun CalculatorDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     val brain: CalculatorBrain = viewModel()
-                    LaunchedEffect(brain) {
-                        brain.state = UICalculateState(
-                            pendingValue = initialValue,
-                        )
-                    }
+//                    LaunchedEffect(brain) {
+//                        state = UICalculateState(
+//                            pendingValue = initialValue,
+//                        )
+//                    }
                     CalculatorContent(modifier = modifier, brain = brain, onResult = onResult)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -100,17 +101,19 @@ fun CalculatorDialog(
 @Preview
 @Composable
 private fun CalculateScreen() {
-    val brain = viewModel<CalculatorBrain>().also {
-        it.state = UICalculateState(
-            input = "123",
-            pendingValue = BigDecimal(456),
-            pendingOperation = ActionButtonType.Add
+    val state = UICalculateState(
+        input = "123",
+        pendingValue = BigDecimal(456),
+        pendingOperation = ActionButtonType.Add
+    )
+
+    Surface {
+        CalculatorLayout(
+            state = state,
+            onAction = {},
+            onNumber = {}
         )
     }
-    CalculatorContent(
-        modifier = Modifier.fillMaxWidth(),
-        brain = brain
-    )
 }
 
 @Preview
