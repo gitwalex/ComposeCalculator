@@ -94,7 +94,6 @@ dependencies {
     androidTestImplementation(libs.mockk.agent)
 
 
-
 }
 publishing {
 
@@ -102,10 +101,11 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "github.gitwalex.com"
             artifactId = "compose-calculator-dialog"
-            version = "0.0.1"
+            version = "0.0.3"
 
-            afterEvaluate {
-                from(components["release"])
+            val releaseComponent = components.findByName("release")
+            if (releaseComponent != null) {
+                from(releaseComponent)
             }
         }
     }
