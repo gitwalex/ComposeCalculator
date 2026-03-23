@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -21,8 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import com.gerwalex.calculator.common.ActionButton
 import com.gerwalex.calculator.common.ActionButtonType
@@ -31,30 +26,11 @@ import com.gerwalex.calculator.common.NumberButtonType
 import com.gerwalex.calculator.ui.theme.LocalColors
 import java.math.BigDecimal
 
-@Composable
-fun CalculatorContent(
-    modifier: Modifier,
-    brain: CalculatorBrain,
-    onResult: (BigDecimal) -> Unit = {}
-) {
-    val state by brain.state.collectAsStateWithLifecycle()
-    val onResult by rememberUpdatedState(onResult)
-    LaunchedEffect(state) {
-        onResult(state.currentInput)
-    }
-    CalculatorLayout(
-        state = state, onAction = {
-            brain.onAction(it)
-        },
-        onNumber = {
-            brain.onAction(it)
-        })
-
-}
 
 @Composable
 fun CalculatorLayout(
     state: UICalculateState,
+    modifier: Modifier = Modifier,
     onAction: (ActionButtonType) -> Unit,
     onNumber: (NumberButtonType) -> Unit,
 
@@ -63,7 +39,7 @@ fun CalculatorLayout(
     val customColors = LocalColors.current
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 30.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp) // Abstand zwischen den Zeilen
     ) {
@@ -83,7 +59,7 @@ fun CalculatorLayout(
                 )
             }
             Text(
-                text = state.input,
+                text = state.inputString,
                 color = customColors.fontColorPurple,
                 fontSize = 45.sp, // Schön groß im M3 Style
                 fontWeight = FontWeight.Bold,
@@ -219,7 +195,7 @@ fun CalculatorRow(content: @Composable RowScope.() -> Unit) {
 @Composable
 private fun CalculaterContent() {
     val state = UICalculateState(
-        input = "123",
+        input = "123".toBigDecimal(),
         pendingValue = BigDecimal(456),
         pendingOperation = ActionButtonType.Add
     )

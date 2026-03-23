@@ -17,11 +17,11 @@ class CalculatorBrainTest {
 
     @Test
     fun inputValueOne() {
-        brain.onAction(NumberButtonType.One)
-        brain.onAction(NumberButtonType.Two)
-        brain.onAction(NumberButtonType.Period)
-        brain.onAction(NumberButtonType.Three)
-        brain.onAction(NumberButtonType.Four)
+        brain.onNumberAction(NumberButtonType.One)
+        brain.onNumberAction(NumberButtonType.Two)
+        brain.onNumberAction(NumberButtonType.Period)
+        brain.onNumberAction(NumberButtonType.Three)
+        brain.onNumberAction(NumberButtonType.Four)
         assert(brain.state.input == "12.34")
         assert(brain.state.currentInput == "12.34".toBigDecimal()) { "Invalid input " }
 
@@ -30,9 +30,9 @@ class CalculatorBrainTest {
     @Test
     fun inputValueTwo() {
         with(brain) {
-            onAction(NumberButtonType.Five)
-            onAction(NumberButtonType.Period)
-            onAction(NumberButtonType.Six)
+            onNumberAction(NumberButtonType.Five)
+            onNumberAction(NumberButtonType.Period)
+            onNumberAction(NumberButtonType.Six)
             assert(state.input == "5.6") { "Invalid input ${state.input}" }
             assert(state.currentInput == "5.6".toBigDecimal()) { "Invalid input ${state.currentInput}" }
 
@@ -71,8 +71,8 @@ class CalculatorBrainTest {
     @Test
     fun testOnActionDivideNumbers() {
         with(brain) {
-            onAction(NumberButtonType.One)
-            onAction(NumberButtonType.Period)
+            onNumberAction(NumberButtonType.One)
+            onNumberAction(NumberButtonType.Period)
             assert(state.input == "1.")
             assert(state.currentInput == "1".toBigDecimal()) { "Invalid input ${state.currentInput}" }
             onAction(ActionButtonType.Divide)
@@ -80,10 +80,10 @@ class CalculatorBrainTest {
             assert(state.input == "0") { "Invalid input ${state.input}" }
             assert(state.currentInput == BigDecimal.ZERO) { "Invalid current input ${state.currentInput}" }
             assert(state.pendingValue == "1".toBigDecimal()) { "Invalid pending Value $state.pendingValue" }
-            onAction(NumberButtonType.Five)
+            onNumberAction(NumberButtonType.Five)
             onAction(ActionButtonType.Evaluate)
             assert(state.input == "0.2") { "Invalid input, input is ${state.input}" }
-            onAction(NumberButtonType.Two)
+            onNumberAction(NumberButtonType.Two)
             assert(state.input == "2") { "Invalid input, input is ${state.input}" }
         }
     }
@@ -91,14 +91,14 @@ class CalculatorBrainTest {
     @Test
     fun testTwoDifferentCalculations() {
         with(brain) {
-            onAction(NumberButtonType.One)
+            onNumberAction(NumberButtonType.One)
             onAction(ActionButtonType.Add)
             assert(state.pendingOperation == ActionButtonType.Add)
-            onAction(NumberButtonType.Five)
+            onNumberAction(NumberButtonType.Five)
             onAction(ActionButtonType.Evaluate)
             assert(state.pendingOperation == ActionButtonType.ClearInput) { "Invalid current input ${state.currentInput}" }
             assert(state.input == "6") { "Invalid input, input is ${state.input}" }
-            onAction(NumberButtonType.Two)
+            onNumberAction(NumberButtonType.Two)
             assert(state.input == "2") { "Invalid input, input is ${state.input}" }
         }
     }

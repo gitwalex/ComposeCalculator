@@ -81,7 +81,7 @@ fun ActionButton(
 @Composable
 private fun CalculatorActionButtonDialog() {
     val state = UICalculateState(
-            input = "123",
+        input = "123".toBigDecimal(),
             pendingValue = BigDecimal(456),
             pendingOperation = ActionButtonType.Add
         )

@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,20 +28,6 @@ import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.ui.component.myColors
 import java.math.BigDecimal
 
-@Composable
-fun CalculatorScreen(
-    modifier: Modifier = Modifier,
-    initialValue: BigDecimal = BigDecimal.ZERO,
-    onResult: (BigDecimal) -> Unit
-) {
-    val brain: CalculatorBrain = viewModel()
-    //    LaunchedEffect(state) {
-//        state = UICalculateState(
-//            pendingValue = initialValue,
-//        )
-//    }
-    CalculatorContent(modifier = modifier, brain = brain, onResult = onResult)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +38,11 @@ fun CalculatorDialog(
     onResult: (BigDecimal) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val brain: CalculatorBrain = viewModel()
+    val state by brain.state.collectAsStateWithLifecycle()
+    LaunchedEffect(brain) {
+        brain.setup(initialValue)
+    }
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
@@ -66,30 +58,19 @@ fun CalculatorDialog(
                     modifier = Modifier.widthIn(max = 500.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    val brain: CalculatorBrain = viewModel()
-//                    LaunchedEffect(brain) {
-//                        state = UICalculateState(
-//                            pendingValue = initialValue,
-//                        )
-//                    }
-                    CalculatorContent(modifier = modifier, brain = brain, onResult = onResult)
+                    CalculatorLayout(
+                        state = state,
+                        onAction = { brain.onAction(it) },
+                        onNumber = { brain.onNumberAction(it) })
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TextButton(
-                            onClick = {
-                                //   onConfirm()
-                            }
-                        ) {
+                        TextButton(onClick = { onResult(state.input) }) {
                             Text("Speichern")
                         }
 
-                        TextButton(
-                            onClick = {
-                                onDismissRequest()
-                            }
-                        ) {
+                        TextButton(onClick = { onDismissRequest() }) {
                             Text("Abbrechen")
                         }
                     }
@@ -102,7 +83,7 @@ fun CalculatorDialog(
 @Composable
 private fun CalculateScreen() {
     val state = UICalculateState(
-        input = "123",
+        input = "123".toBigDecimal(),
         pendingValue = BigDecimal(456),
         pendingOperation = ActionButtonType.Add
     )

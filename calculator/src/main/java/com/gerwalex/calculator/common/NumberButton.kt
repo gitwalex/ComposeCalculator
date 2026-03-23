@@ -76,7 +76,7 @@ fun NumberButton(
 @Composable
 private fun CalculatorNumberButtonDialog() {
     val state = UICalculateState(
-        input = "123",
+        input = "123".toBigDecimal(),
         pendingValue = BigDecimal(456),
         pendingOperation = ActionButtonType.Add
     )

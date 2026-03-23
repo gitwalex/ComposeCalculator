@@ -27,44 +27,44 @@ fun Numpad(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 NumberButton(symbol = NumberButtonType.Seven)
-                { onAction(NumberButtonType.Seven) }
+                { onNumberAction(NumberButtonType.Seven) }
                 NumberButton(symbol = NumberButtonType.Eight)
-                { onAction(NumberButtonType.Eight) }
+                { onNumberAction(NumberButtonType.Eight) }
                 NumberButton(symbol = NumberButtonType.Nine)
-                { onAction(NumberButtonType.Nine) }
+                { onNumberAction(NumberButtonType.Nine) }
             }
             Row(
                 horizontalArrangement = spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 NumberButton(symbol = NumberButtonType.Four)
-                { onAction(NumberButtonType.Four) }
+                { onNumberAction(NumberButtonType.Four) }
                 NumberButton(symbol = NumberButtonType.Five)
-                { onAction(NumberButtonType.Five) }
+                { onNumberAction(NumberButtonType.Five) }
                 NumberButton(symbol = NumberButtonType.Six)
-                { onAction(NumberButtonType.Six) }
+                { onNumberAction(NumberButtonType.Six) }
             }
             Row(
                 horizontalArrangement = spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 NumberButton(symbol = NumberButtonType.One)
-                { onAction(NumberButtonType.One) }
+                { onNumberAction(NumberButtonType.One) }
                 NumberButton(symbol = NumberButtonType.Two)
-                { onAction(NumberButtonType.Two) }
+                { onNumberAction(NumberButtonType.Two) }
                 NumberButton(symbol = NumberButtonType.Three)
-                { onAction(NumberButtonType.Three) }
+                { onNumberAction(NumberButtonType.Three) }
             }
             Row(
                 horizontalArrangement = spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 NumberButton(symbol = NumberButtonType.Zero)
-                { onAction(NumberButtonType.Zero) }
+                { onNumberAction(NumberButtonType.Zero) }
                 NumberButton(symbol = NumberButtonType.Period)
-                { onAction(NumberButtonType.Period) }
+                { onNumberAction(NumberButtonType.Period) }
                 NumberButton(symbol = NumberButtonType.BackSpace)
-                { onAction(NumberButtonType.BackSpace) }
+                { onNumberAction(NumberButtonType.BackSpace) }
             }
         }
     }

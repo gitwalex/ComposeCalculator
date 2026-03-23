@@ -1,4 +1,5 @@
 package com.gerwalex.calculator.arithmatic
+
 import androidx.lifecycle.ViewModel
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
@@ -7,9 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 class CalculatorBrain : ViewModel() {
+
+    private var isInitailized = false
 
     // Interner MutableStateFlow
     private val _state = MutableStateFlow(UICalculateState())
@@ -17,9 +19,16 @@ class CalculatorBrain : ViewModel() {
     // Externer schreibgeschützter Flow für die UI
     val state: StateFlow<UICalculateState> = _state.asStateFlow()
 
-    fun onAction(action: NumberButtonType) {
+    fun setup(initialValue: BigDecimal) {
+        if (!isInitailized) {
+            _state.update { it.copy(input = initialValue) }
+            isInitailized = true
+        }
+    }
+
+    fun onNumberAction(action: NumberButtonType) {
         _state.update { currentState ->
-            var workingInput = currentState.input
+            var workingInput = currentState.inputString
 
             // Logik für ClearInput-Zustand
             if (currentState.pendingOperation == ActionButtonType.ClearInput) {
@@ -37,7 +46,7 @@ class CalculatorBrain : ViewModel() {
                 else -> workingInput + action.type
             }
 
-            currentState.copy(input = newInput)
+            currentState.copy(input = newInput.toBigDecimal())
         }
     }
 
@@ -51,14 +60,15 @@ class CalculatorBrain : ViewModel() {
                 evaluate()
                 _state.update { it.copy(pendingOperation = ActionButtonType.ClearInput) }
             }
+
             ActionButtonType.ToggleSign -> onToggleSign()
             else -> {
                 evaluate()
                 _state.update { currentState ->
                     currentState.copy(
                         pendingOperation = action,
-                        pendingValue = currentState.currentInput,
-                        input = "0",
+                        pendingValue = currentState.input,
+                        input = BigDecimal.ZERO,
                     )
                 }
             }
@@ -93,40 +103,41 @@ class CalculatorBrain : ViewModel() {
 
     private fun onBackSpace() {
         _state.update { currentState ->
+            val workingInput = currentState.inputString
             when {
-                currentState.input == "0" && currentState.pendingOperation != ActionButtonType.None -> {
+                workingInput == "0" && currentState.pendingOperation != ActionButtonType.None -> {
                     currentState.copy(
-                        input = currentState.pendingMemory,
+                        input = currentState.pendingValue,
                         pendingOperation = ActionButtonType.None,
                         pendingValue = BigDecimal.ZERO
                     )
                 }
 
-                currentState.input.length == 2 && currentState.currentInput < BigDecimal.ZERO -> {
-                    currentState.copy(input = "0")
+                workingInput.length == 2 && currentState.input < BigDecimal.ZERO -> {
+                    currentState.copy(input = BigDecimal.ZERO)
                 }
 
-                currentState.input.length > 1 -> {
-                    currentState.copy(input = currentState.input.dropLast(1))
+                workingInput.length > 1 -> {
+                    currentState.copy(input = currentState.inputString.dropLast(1).toBigDecimal())
                 }
 
-                else -> currentState.copy(input = "0")
+                else -> currentState.copy(input = BigDecimal.ZERO)
             }
         }
     }
 
     private fun onToggleSign() {
-        _state.update { it.copy(input = it.currentInput.negate().toString()) }
+        _state.update { it.copy(input = it.input.negate()) }
     }
 
     private fun onClearInput() {
-        _state.update { it.copy(input = "0") }
+        _state.update { it.copy(input = BigDecimal.ZERO) }
     }
 
     private fun onAdd() {
         _state.update { s ->
             s.copy(
-                input = (s.pendingValue + s.currentInput).stripTrailingZeros().toString(),
+                input = (s.pendingValue.add(s.input)).stripTrailingZeros(),
                 pendingOperation = ActionButtonType.None
             )
         }
@@ -135,7 +146,7 @@ class CalculatorBrain : ViewModel() {
     private fun onSubtract() {
         _state.update { s ->
             s.copy(
-                input = (s.pendingValue - s.currentInput).stripTrailingZeros().toString(),
+                input = (s.pendingValue.minus(s.input)).stripTrailingZeros(),
                 pendingOperation = ActionButtonType.None
             )
         }
@@ -144,7 +155,7 @@ class CalculatorBrain : ViewModel() {
     private fun onMultiply() {
         _state.update { s ->
             s.copy(
-                input = s.pendingValue.multiply(s.currentInput).stripTrailingZeros().toString(),
+                input = (s.pendingValue.multiply(s.input)).stripTrailingZeros(),
                 pendingOperation = ActionButtonType.None
             )
         }
@@ -152,9 +163,8 @@ class CalculatorBrain : ViewModel() {
 
     private fun onDivide() {
         _state.update { s ->
-            val result = s.pendingValue.divide(s.currentInput, 8, RoundingMode.HALF_UP)
             s.copy(
-                input = result.stripTrailingZeros().toString(),
+                input = s.pendingValue.divide(s.input).stripTrailingZeros(),
                 pendingOperation = ActionButtonType.None
             )
         }

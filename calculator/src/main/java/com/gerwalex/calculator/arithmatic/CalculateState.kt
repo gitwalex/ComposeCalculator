@@ -1,16 +1,15 @@
 package com.gerwalex.calculator.arithmatic
 
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import com.gerwalex.calculator.common.ActionButtonType
 import java.math.BigDecimal
 
 data class UICalculateState(
-    val input: String = "0",
+    val input: BigDecimal = BigDecimal.ZERO,
     val pendingValue: BigDecimal = BigDecimal.ZERO,
     val pendingOperation: ActionButtonType = ActionButtonType.None,
     val error: Int? = null,
 ) {
-    val pendingMemory by derivedStateOf { pendingValue.toString() }
-    val currentInput: BigDecimal by derivedStateOf { input.toBigDecimal() }
+    val pendingMemory = pendingValue.toPlainString()
+    val inputString: String = input.toPlainString()
+
 }
