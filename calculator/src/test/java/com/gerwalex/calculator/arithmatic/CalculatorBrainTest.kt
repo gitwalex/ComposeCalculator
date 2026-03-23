@@ -412,6 +412,17 @@ class CalculatorBrainTest {
     }
 
     @Test
+    fun `test multiple zeros before decimal point`() = runTest {
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Five)
+
+        assertEquals("5", brain.state.value.inputString)
+        assertEquals(BigDecimal("5"), brain.state.value.input)
+    }
+
+    @Test
     fun `test backspace with multiple decimal zeros`() = runTest {
         brain.onNumberAction(NumberButtonType.Zero)
         brain.onNumberAction(NumberButtonType.Period)
