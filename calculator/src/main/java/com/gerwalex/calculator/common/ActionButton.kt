@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +66,9 @@ fun ActionButton(
                 onClick(symbol)
             }
             .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
-    ) {
+            .semantics { contentDescription = symbol.name },
+
+        ) {
         BasicText(
             modifier = Modifier.align(Alignment.Center),
             style = TextStyle(
@@ -82,9 +86,9 @@ fun ActionButton(
 private fun CalculatorActionButtonDialog() {
     val state = UICalculateState(
         inputString = "123",
-            pendingValue = BigDecimal(456),
-            pendingOperation = ActionButtonType.Add
-        )
+        pendingValue = BigDecimal(456),
+        pendingOperation = ActionButtonType.Add
+    )
 
     Surface {
         CalculatorLayout(

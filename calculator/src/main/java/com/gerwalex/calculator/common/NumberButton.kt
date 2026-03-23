@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,11 +58,9 @@ fun NumberButton(
         },
         modifier = modifier
             .padding(4.dp)
-            .aspectRatio(1f), // Sorgt für quadratische Form
-        shape = CircleShape, // Oder RoundedCornerShape(16.dp) für M3 Look
-//        colors = ButtonDefaults.buttonColors(
-//            containerColor = LocalColors.current.numberButtonColor
-//        )
+            .aspectRatio(1f)
+            .semantics { contentDescription = symbol.name },
+        shape = CircleShape,
     ) {
         Text(
             text = symbol.type,
