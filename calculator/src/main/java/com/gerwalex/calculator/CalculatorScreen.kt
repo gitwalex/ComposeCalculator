@@ -83,7 +83,7 @@ fun CalculatorDialog(
 @Composable
 private fun CalculateScreen() {
     val state = UICalculateState(
-        input = "123".toBigDecimal(),
+        inputString = "123",
         pendingValue = BigDecimal(456),
         pendingOperation = ActionButtonType.Add
     )

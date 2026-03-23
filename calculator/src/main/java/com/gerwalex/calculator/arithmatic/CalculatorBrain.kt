@@ -21,7 +21,7 @@ class CalculatorBrain : ViewModel() {
 
     fun setup(initialValue: BigDecimal) {
         if (!isInitailized) {
-            _state.update { it.copy(input = initialValue) }
+            _state.update { it.copy(inputString = initialValue.toPlainString()) }
             isInitailized = true
         }
     }
@@ -34,19 +34,20 @@ class CalculatorBrain : ViewModel() {
             if (currentState.pendingOperation == ActionButtonType.ClearInput) {
                 workingInput = "0"
             }
+            if (action == NumberButtonType.Period && workingInput.contains('.')) return@update currentState
+            if (action == NumberButtonType.Zero && workingInput == "0") return@update currentState
 
-            val newInput = when {
-                action == NumberButtonType.BackSpace -> {
-                    if (workingInput.length > 1) workingInput.dropLast(1) else "0"
+            val newInput =
+                when {
+                    action == NumberButtonType.BackSpace -> {
+                        if (workingInput.length > 1) workingInput.dropLast(1) else "0"
+                    }
+
+                    workingInput == "0" -> action.type
+                    else -> workingInput + action.type
                 }
 
-                action == NumberButtonType.Period && workingInput.contains('.') -> return@update currentState
-                action == NumberButtonType.Zero && workingInput == "0" -> return@update currentState
-                workingInput == "0" -> action.type
-                else -> workingInput + action.type
-            }
-
-            currentState.copy(input = newInput.toBigDecimal())
+            currentState.copy(inputString = newInput)
         }
     }
 
@@ -68,7 +69,7 @@ class CalculatorBrain : ViewModel() {
                     currentState.copy(
                         pendingOperation = action,
                         pendingValue = currentState.input,
-                        input = BigDecimal.ZERO,
+                        inputString = "0",
                     )
                 }
             }
@@ -76,24 +77,43 @@ class CalculatorBrain : ViewModel() {
     }
 
     private fun evaluate() {
-        val currentOp = _state.value.pendingOperation
-        when (currentOp) {
-            ActionButtonType.ClearInput -> _state.update { it.copy(pendingValue = BigDecimal.ZERO) }
-            ActionButtonType.Add -> onAdd()
-            ActionButtonType.Subtract -> onSubtract()
-            ActionButtonType.Multiply -> onMultiply()
-            ActionButtonType.Divide -> onDivide()
-            ActionButtonType.ClearAll -> onClearAll()
-            ActionButtonType.BackSpace -> onBackSpace()
-            ActionButtonType.Delete -> TODO()
-            ActionButtonType.Evaluate -> {
-                evaluate()
-                _state.update { it.copy(pendingOperation = ActionButtonType.ClearInput) }
+        val currentState = _state.value
+        val currentOp = currentState.pendingOperation
+
+        // Wenn keine Operation ansteht, gibt es nichts zu rechnen
+        if (currentOp == ActionButtonType.None || currentOp == ActionButtonType.Evaluate) return
+
+        try {
+            val result = when (currentOp) {
+                ActionButtonType.Add -> currentState.pendingValue.add(currentState.input)
+                ActionButtonType.Subtract -> currentState.pendingValue.subtract(currentState.input)
+                ActionButtonType.Multiply -> currentState.pendingValue.multiply(currentState.input)
+                ActionButtonType.Divide -> {
+                    if (currentState.input == BigDecimal.ZERO) {
+                        // Fehlerbehandlung: Division durch Null
+                        BigDecimal.ZERO
+                    } else {
+                        // Scale und RoundingMode verhindern Abstürze bei 1/3
+                        currentState.pendingValue.divide(
+                            currentState.input,
+                            8,
+                            java.math.RoundingMode.HALF_UP
+                        )
+                    }
+                }
+
+                else -> currentState.input
             }
 
-            ActionButtonType.ToggleSign -> _state.update { it.copy(pendingValue = -it.pendingValue) }
-            ActionButtonType.None -> { /* Nichts zu tun */
+            _state.update {
+                it.copy(
+                    inputString = result.stripTrailingZeros().toPlainString(),
+                    pendingValue = BigDecimal.ZERO,
+                    pendingOperation = ActionButtonType.None
+                )
             }
+        } catch (e: Exception) {
+            // Optional: Fehlerstatus setzen
         }
     }
 
@@ -107,66 +127,31 @@ class CalculatorBrain : ViewModel() {
             when {
                 workingInput == "0" && currentState.pendingOperation != ActionButtonType.None -> {
                     currentState.copy(
-                        input = currentState.pendingValue,
+                        inputString = currentState.pendingMemory,
                         pendingOperation = ActionButtonType.None,
                         pendingValue = BigDecimal.ZERO
                     )
                 }
 
                 workingInput.length == 2 && currentState.input < BigDecimal.ZERO -> {
-                    currentState.copy(input = BigDecimal.ZERO)
+                    currentState.copy(inputString = "0")
                 }
 
                 workingInput.length > 1 -> {
-                    currentState.copy(input = currentState.inputString.dropLast(1).toBigDecimal())
+                    currentState.copy(inputString = currentState.inputString.dropLast(1))
                 }
 
-                else -> currentState.copy(input = BigDecimal.ZERO)
+                else -> currentState.copy(inputString = "0")
             }
         }
     }
 
     private fun onToggleSign() {
-        _state.update { it.copy(input = it.input.negate()) }
+        _state.update { it.copy(inputString = it.input.negate().toPlainString()) }
     }
 
     private fun onClearInput() {
-        _state.update { it.copy(input = BigDecimal.ZERO) }
+        _state.update { it.copy(inputString = "0") }
     }
 
-    private fun onAdd() {
-        _state.update { s ->
-            s.copy(
-                input = (s.pendingValue.add(s.input)).stripTrailingZeros(),
-                pendingOperation = ActionButtonType.None
-            )
-        }
-    }
-
-    private fun onSubtract() {
-        _state.update { s ->
-            s.copy(
-                input = (s.pendingValue.minus(s.input)).stripTrailingZeros(),
-                pendingOperation = ActionButtonType.None
-            )
-        }
-    }
-
-    private fun onMultiply() {
-        _state.update { s ->
-            s.copy(
-                input = (s.pendingValue.multiply(s.input)).stripTrailingZeros(),
-                pendingOperation = ActionButtonType.None
-            )
-        }
-    }
-
-    private fun onDivide() {
-        _state.update { s ->
-            s.copy(
-                input = s.pendingValue.divide(s.input).stripTrailingZeros(),
-                pendingOperation = ActionButtonType.None
-            )
-        }
-    }
 }
