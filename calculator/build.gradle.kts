@@ -75,17 +75,6 @@ dependencies {
     androidTestImplementation(libs.mockk.agent)
 
 
-    //Koin
-    implementation(platform(libs.koin.bom))
-    ksp(libs.koin.ksp.compiler)
-    implementation(libs.bundles.koin)
-    testImplementation(platform(libs.koin.bom))
-    testImplementation(libs.koin.test)
-    testImplementation(libs.koin.test.junit4)
-    androidTestImplementation(platform(libs.koin.bom))
-    androidTestImplementation(libs.koin.test)
-    androidTestImplementation(libs.koin.test.android)
-    androidTestImplementation(libs.koin.test.junit4)
 
 }
 publishing {
