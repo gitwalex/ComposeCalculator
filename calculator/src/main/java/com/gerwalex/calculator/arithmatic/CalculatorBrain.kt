@@ -28,8 +28,8 @@ class CalculatorBrain : ViewModel() {
 
     fun onNumberAction(action: NumberButtonType) {
         _state.update { currentState ->
-            var workingInput = currentState.inputString
-
+            var workingInput =
+                if (currentState.isNewInputStarting) "0" else currentState.inputString
             // Logik für ClearInput-Zustand
             if (currentState.pendingOperation == ActionButtonType.ClearInput) {
                 workingInput = "0"
@@ -39,6 +39,7 @@ class CalculatorBrain : ViewModel() {
 
             val newInput =
                 when {
+                    action == NumberButtonType.Period -> workingInput + action.type
                     action == NumberButtonType.BackSpace -> {
                         if (workingInput.length > 1) workingInput.dropLast(1) else "0"
                     }
@@ -47,7 +48,7 @@ class CalculatorBrain : ViewModel() {
                     else -> workingInput + action.type
                 }
 
-            currentState.copy(inputString = newInput)
+            currentState.copy(inputString = newInput, isNewInputStarting = false)
         }
     }
 
@@ -59,17 +60,22 @@ class CalculatorBrain : ViewModel() {
             ActionButtonType.Delete -> TODO()
             ActionButtonType.Evaluate -> {
                 evaluate()
-                _state.update { it.copy(pendingOperation = ActionButtonType.ClearInput) }
+                _state.update { it.copy(isNewInputStarting = true) }
             }
 
             ActionButtonType.ToggleSign -> onToggleSign()
             else -> {
-                evaluate()
+                if (_state.value.isNewInputStarting && _state.value.pendingOperation != ActionButtonType.None) {
+                    _state.update { it.copy(pendingOperation = action) }
+                    return
+                }
+                if (_state.value.pendingOperation != ActionButtonType.None)
+                    evaluate()
                 _state.update { currentState ->
                     currentState.copy(
                         pendingOperation = action,
                         pendingValue = currentState.input,
-                        inputString = "0",
+                        isNewInputStarting = true // Du müsstest dieses Feld im UICalculateState ergänzen
                     )
                 }
             }
@@ -89,7 +95,7 @@ class CalculatorBrain : ViewModel() {
                 ActionButtonType.Subtract -> currentState.pendingValue.subtract(currentState.input)
                 ActionButtonType.Multiply -> currentState.pendingValue.multiply(currentState.input)
                 ActionButtonType.Divide -> {
-                    if (currentState.input == BigDecimal.ZERO) {
+                    if (currentState.isNewInputStarting || currentState.input == BigDecimal.ZERO) {
                         // Fehlerbehandlung: Division durch Null
                         BigDecimal.ZERO
                     } else {
@@ -109,7 +115,8 @@ class CalculatorBrain : ViewModel() {
                 it.copy(
                     inputString = result.stripTrailingZeros().toPlainString(),
                     pendingValue = BigDecimal.ZERO,
-                    pendingOperation = ActionButtonType.None
+                    pendingOperation = ActionButtonType.None,
+                    isNewInputStarting = true,
                 )
             }
         } catch (e: Exception) {

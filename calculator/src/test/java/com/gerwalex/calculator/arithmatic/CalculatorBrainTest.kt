@@ -113,16 +113,19 @@ class CalculatorBrainTest {
     @Test
     fun `test chain operations 5 + 5 + 5`() = runTest {
         brain.onNumberAction(NumberButtonType.Five)
-        brain.onAction(ActionButtonType.Add) // input wird 0, pending wird 5
-        brain.onNumberAction(NumberButtonType.Five)
-        brain.onAction(ActionButtonType.Add) // Hier sollte add() ausgeführt werden -> input 10
-
-        assertEquals(BigDecimal("10"), brain.state.value.input)
+        brain.onAction(ActionButtonType.Add)
 
         brain.onNumberAction(NumberButtonType.Five)
-        brain.onAction(ActionButtonType.Evaluate) // 10 + 5
+        brain.onAction(ActionButtonType.Add) // Hier passiert die Zwischenrechnung 5+5
 
-        assertEquals(BigDecimal("15"), brain.state.value.input)
+        // Check Zwischenstand: Ergebnis der ersten Rechnung muss im Speicher (pendingValue) sein
+        assertEquals(BigDecimal("10"), brain.state.value.pendingValue)
+        assertEquals("10", brain.state.value.inputString)
+
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        assertEquals("15", brain.state.value.inputString)
     }
 
 
@@ -162,7 +165,7 @@ class CalculatorBrainTest {
             inputValueOne()
             onAction(ActionButtonType.Add)
             assert(state.value.pendingOperation == ActionButtonType.Add)
-            assert(state.value.inputString == "0") { "Invalid input ${state.value.inputString}" }
+            assert(state.value.inputString == "12.34") { "Invalid input ${state.value.inputString}" }
             assert(state.value.pendingValue == "12.34".toBigDecimal()) { "Invalid pending Value ${state.value.pendingValue}" }
             inputValueTwo()
             onAction(ActionButtonType.Evaluate)
@@ -176,8 +179,7 @@ class CalculatorBrainTest {
             inputValueOne()
             onAction(ActionButtonType.Multiply)
             assert(state.value.pendingOperation == ActionButtonType.Multiply)
-            assert(state.value.inputString == "0") { "Invalid input ${state.value.inputString}" }
-            assert(state.value.input == BigDecimal.ZERO) { "Invalid current input ${state.value.input}" }
+            assert(state.value.inputString == "12.34") { "Invalid input ${state.value.inputString}" }
             assert(state.value.pendingValue == "12.34".toBigDecimal()) { "Invalid pending Value ${state.value.pendingValue}" }
             inputValueTwo()
             onAction(ActionButtonType.Evaluate)
@@ -190,12 +192,10 @@ class CalculatorBrainTest {
         with(brain) {
             onNumberAction(NumberButtonType.One)
             onNumberAction(NumberButtonType.Period)
-            assert(state.value.inputString == "1.")
-            assert(state.value.input == "1".toBigDecimal()) { "Invalid input ${state.value.input}" }
+            assert(state.value.inputString == "1.") { "Invalid input ${state.value.inputString}" }
             onAction(ActionButtonType.Divide)
             assert(state.value.pendingOperation == ActionButtonType.Divide)
-            assert(state.value.inputString == "0") { "Invalid input ${state.value.inputString}" }
-            assert(state.value.input == BigDecimal.ZERO) { "Invalid current input ${state.value.input}" }
+            assert(state.value.inputString == "1.") { "Invalid input ${state.value.inputString}" }
             assert(state.value.pendingValue == "1".toBigDecimal()) { "Invalid pending Value $state.pendingValue" }
             onNumberAction(NumberButtonType.Five)
             onAction(ActionButtonType.Evaluate)
@@ -213,10 +213,10 @@ class CalculatorBrainTest {
             assert(state.value.pendingOperation == ActionButtonType.Add)
             onNumberAction(NumberButtonType.Five)
             onAction(ActionButtonType.Evaluate)
-            assert(state.value.pendingOperation == ActionButtonType.ClearInput) { "Invalid current input ${state.value.input}" }
-            assert(state.value.inputString == "6") { "Invalid input, input is ${state.value.inputString}" }
+            assertEquals(state.value.pendingOperation, ActionButtonType.None)
+            assertEquals(state.value.inputString, "6")
             onNumberAction(NumberButtonType.Two)
-            assert(state.value.inputString == "2") { "Invalid input, input is ${state.value.inputString}" }
+            assertEquals(state.value.inputString, "2")
         }
     }
 
@@ -226,7 +226,7 @@ class CalculatorBrainTest {
             inputValueOne()
             onAction(ActionButtonType.Add)
             assert(state.value.pendingOperation == ActionButtonType.Add)
-            assert(state.value.inputString == "0") { "Invalid input ${state.value.inputString}" }
+            assert(state.value.inputString == "12.34") { "Invalid input ${state.value.inputString}" }
             assert(state.value.pendingMemory == "12.34")
             inputValueTwo()
             assert(state.value.inputString == "5.6") { "Invalid input, input is ${state.value.inputString}" }
@@ -279,5 +279,149 @@ class CalculatorBrainTest {
             onAction(ActionButtonType.ToggleSign)
             assert(state.value.inputString == "-12.34")
         }
+    }
+
+    @Test
+    fun `test division by zero returns zero`() = runTest {
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Divide)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        assertEquals(BigDecimal.ZERO, brain.state.value.input)
+        // Optional: Prüfen ob ein Fehlerflag im State gesetzt wurde, falls du das einbaust
+    }
+
+    @Test
+    fun `test multiple evaluate calls`() = runTest {
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Add)
+        brain.onNumberAction(NumberButtonType.Two)
+        brain.onAction(ActionButtonType.Evaluate) // Ergebnis 7
+        brain.onAction(ActionButtonType.Evaluate) // Sollte stabil bei 7 bleiben (oder +2 rechnen, je nach Design)
+
+        assertEquals("7", brain.state.value.inputString)
+    }
+
+    @Test
+    fun `test leading zeros and starting with period`() = runTest {
+        // Start mit Punkt
+        brain.onNumberAction(NumberButtonType.Period)
+        assertEquals("0.", brain.state.value.inputString)
+
+        brain.onAction(ActionButtonType.ClearAll)
+
+        // Mehrere Nullen am Anfang
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Five)
+        assertEquals("5", brain.state.value.inputString)
+    }
+
+    @Test
+    fun `test changing operator before second number`() = runTest {
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Add)
+        brain.onAction(ActionButtonType.Subtract) // User korrigiert sich
+
+        brain.onNumberAction(NumberButtonType.Two)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        assertEquals(BigDecimal("3"), brain.state.value.input)
+    }
+
+    @Test
+    fun `test high precision division and stripping zeros`() = runTest {
+        brain.onNumberAction(NumberButtonType.One)
+        brain.onAction(ActionButtonType.Divide)
+        brain.onNumberAction(NumberButtonType.Three)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        // Erwartet: 0.33333333 (8 Stellen laut deinem Code)
+        assertEquals("0.33333333", brain.state.value.inputString)
+
+        brain.onAction(ActionButtonType.ClearAll)
+
+        // Test: 1 / 2 soll 0.5 sein, nicht 0.50000000
+        brain.onNumberAction(NumberButtonType.One)
+        brain.onAction(ActionButtonType.Divide)
+        brain.onNumberAction(NumberButtonType.Two)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        assertEquals("0.5", brain.state.value.inputString)
+    }
+
+    @Test
+    fun `test continuing calculation after evaluate`() = runTest {
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Add)
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Evaluate) // Ergebnis 10, pendingOperation ist ClearInput
+
+        // Jetzt direkt weiterrechnen
+        brain.onAction(ActionButtonType.Divide)
+        brain.onNumberAction(NumberButtonType.Two)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        assertEquals(BigDecimal("5"), brain.state.value.input)
+    }
+
+    @Test
+    fun `test starting new decimal number after evaluate`() = runTest {
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onAction(ActionButtonType.Evaluate) // "5"
+
+        brain.onNumberAction(NumberButtonType.Period)
+        brain.onNumberAction(NumberButtonType.Two)
+
+        assertEquals("0.2", brain.state.value.inputString)
+    }
+
+    @Test
+    fun `test toggle sign on zero stays zero`() = runTest {
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onAction(ActionButtonType.ToggleSign)
+
+        // Es sollte "0" bleiben, nicht "-0" (außer du willst das explizit so)
+        assertEquals("0", brain.state.value.inputString)
+    }
+
+    @Test
+    fun `test operator after trailing decimal point`() = runTest {
+        brain.onNumberAction(NumberButtonType.Five)
+        brain.onNumberAction(NumberButtonType.Period) // Display zeigt "5."
+
+        // Darf nicht abstürzen und muss "5" als Wert nehmen
+        brain.onAction(ActionButtonType.Add)
+        brain.onNumberAction(NumberButtonType.Two)
+        brain.onAction(ActionButtonType.Evaluate)
+
+        assertEquals(BigDecimal("7"), brain.state.value.input)
+    }
+
+    @Test
+    fun `test multiple zeros after decimal point`() = runTest {
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Period)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Five)
+
+        assertEquals("0.005", brain.state.value.inputString)
+        assertEquals(BigDecimal("0.005"), brain.state.value.input)
+    }
+
+    @Test
+    fun `test backspace with multiple decimal zeros`() = runTest {
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Period)
+        brain.onNumberAction(NumberButtonType.Zero)
+        brain.onNumberAction(NumberButtonType.Zero) // "0.00"
+
+        brain.onAction(ActionButtonType.BackSpace)
+        assertEquals("0.0", brain.state.value.inputString)
+
+        brain.onAction(ActionButtonType.BackSpace)
+        assertEquals("0.", brain.state.value.inputString)
     }
 }

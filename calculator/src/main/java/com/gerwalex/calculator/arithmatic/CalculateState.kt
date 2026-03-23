@@ -7,6 +7,7 @@ data class UICalculateState(
     val inputString: String = "0",
     val pendingValue: BigDecimal = BigDecimal.ZERO,
     val pendingOperation: ActionButtonType = ActionButtonType.None,
+    val isNewInputStarting: Boolean = false,
     val error: Int? = null,
 ) {
     val pendingMemory = pendingValue.toPlainString()
