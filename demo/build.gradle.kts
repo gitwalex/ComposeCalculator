@@ -1,6 +1,23 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+}
+kotlin {
+    compilerOptions {
+        freeCompilerArgs =
+            listOf(
+                "-Xjavac-arguments='-Xlint:unchecked -Xlint:deprecation'",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xexplicit-backing-fields",
+                "-Xcontext-parameters",
+
+                )
+        jvmTarget = JvmTarget.JVM_21
+        languageVersion.set(KotlinVersion.KOTLIN_2_3)
+    }
 }
 
 android {
@@ -27,11 +44,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlin {
-        jvmToolchain(17)
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true
