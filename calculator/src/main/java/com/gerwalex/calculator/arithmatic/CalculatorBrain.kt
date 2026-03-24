@@ -26,6 +26,18 @@ class CalculatorBrain : ViewModel() {
         }
     }
 
+    /**
+     * Processes numerical input and formatting actions such as digits, decimal points, and backspaces.
+     *
+     * This function updates the current input string in the [state], handling logic for:
+     * - Appending digits to the current input.
+     * - Preventing multiple decimal points in a single number.
+     * - Managing leading zeros to ensure valid numerical representation.
+     * - Handling backspace operations to delete the last character or reset to "0".
+     * - Resetting the input buffer if a new number entry is starting after an operation.
+     *
+     * @param action The specific [NumberButtonType] (e.g., Zero-Nine, Period, or BackSpace) triggered by the user.
+     */
     fun onNumberAction(action: NumberButtonType) {
         _state.update { currentState ->
             var workingInput =
@@ -52,6 +64,18 @@ class CalculatorBrain : ViewModel() {
         }
     }
 
+    /**
+     * Processes non-numeric calculator actions and manages the calculation state.
+     *
+     * This function handles various [ActionButtonType] commands including:
+     * - Utility actions: Clearing the state ([ActionButtonType.ClearAll]), clearing only the current input ([ActionButtonType.ClearInput]),
+     *   deleting the last character ([ActionButtonType.BackSpace]), or toggling the sign ([ActionButtonType.ToggleSign]).
+     * - Evaluation: Triggers the calculation of the pending operation ([ActionButtonType.Evaluate]).
+     * - Arithmetic operations: Sets the operator for the next calculation. If an operation is already pending,
+     *   it evaluates the existing expression before applying the new operator.
+     *
+     * @param action The specific [ActionButtonType] to be performed.
+     */
     fun onAction(action: ActionButtonType) {
         when (action) {
             ActionButtonType.ClearAll -> onClearAll()

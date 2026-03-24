@@ -1,14 +1,11 @@
 package com.gerwalex.calculator
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.gerwalex.calculator.arithmatic.CalculatorBrain
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -17,10 +14,8 @@ import org.robolectric.annotation.Config
 @Config(
     sdk = [33],
 )
-class CalculatorIntegrationTest {
+class CalculatorIntegrationTest : CalculatorTest() {
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
     fun testFullCalculation_5_plus_3_equals_8() {

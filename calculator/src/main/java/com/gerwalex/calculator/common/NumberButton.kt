@@ -2,20 +2,26 @@ package com.gerwalex.calculator.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,28 +51,34 @@ enum class NumberButtonType(val type: String) {
 fun NumberButton(
     symbol: NumberButtonType,
     modifier: Modifier = Modifier,
-    colorFont: Color = MaterialTheme.colorScheme.onPrimary,
+    buttonColor: Color = MaterialTheme.colorScheme.onSurface,
+    colorFont: Color = MaterialTheme.colorScheme.surface,
     onNumber: (NumberButtonType) -> Unit,
 ) {
     val haptics = LocalHapticFeedback.current
-    Button(
-        onClick = {
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            // Oder HapticFeedbackType.TextHandleMove für ein kürzeres Tippen
-
-            onNumber(symbol)
-        },
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
-            .padding(4.dp)
-            .aspectRatio(1f)
+            .width(70.dp)
+            .height(48.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .background(color = buttonColor)
+            .clickable {
+                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                onNumber(symbol)
+            }
             .semantics { contentDescription = symbol.name },
-        shape = CircleShape,
-    ) {
-        Text(
+
+        ) {
+        BasicText(
+            modifier = Modifier.align(Alignment.Center),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+            ),
             text = symbol.type,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 30.sp,
-            color = colorFont
+            maxLines = 1,
+            color = ColorProducer { colorFont },
         )
     }
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gerwalex.calculator.CalculatorLayout
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import java.math.BigDecimal
@@ -48,8 +48,8 @@ enum class ActionButtonType(val type: String) {
 fun ActionButton(
     symbol: ActionButtonType,
     modifier: Modifier = Modifier,
-    colorBackground: Color = MaterialTheme.colorScheme.primary,
-    colorFont: Color = MaterialTheme.colorScheme.onPrimary,
+    buttonColor: Color = MaterialTheme.colorScheme.onSurface,
+    colorFont: Color = MaterialTheme.colorScheme.surface,
     onAction: (ActionButtonType) -> Unit
 ) {
     val onClick by rememberUpdatedState(onAction)
@@ -60,12 +60,11 @@ fun ActionButton(
             .width(70.dp)
             .height(48.dp)
             .clip(RoundedCornerShape(30.dp))
-            .background(color = colorBackground)
+            .background(color = buttonColor)
             .clickable {
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                 onClick(symbol)
             }
-            .padding(start = 6.dp, end = 6.dp, top = 9.dp, bottom = 9.dp)
             .semantics { contentDescription = symbol.name },
 
         ) {
@@ -73,6 +72,7 @@ fun ActionButton(
             modifier = Modifier.align(Alignment.Center),
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
             ),
             text = symbol.type,
             maxLines = 1,
