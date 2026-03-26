@@ -12,8 +12,8 @@ data class UICalculateState(
     val isNewInputStarting: Boolean = false,
     val error: Int? = null,
 ) {
-    val pendingMemory = pendingValue.toPlainString()
+    val pendingMemory: String = pendingValue.toPlainString()
     val input: BigDecimal = inputString.toBigDecimalOrNull() ?: BigDecimal.ZERO
-    val formattedResult = settings.numberFormat.format(input)
+    val formattedResult: String = settings.numberFormat.format(input)
 
 }

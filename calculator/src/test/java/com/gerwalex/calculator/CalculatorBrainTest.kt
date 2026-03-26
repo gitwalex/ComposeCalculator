@@ -1,9 +1,11 @@
-package com.gerwalex.calculator.arithmatic
+package com.gerwalex.calculator
 
+import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -34,9 +36,10 @@ class CalculatorBrainTest {
     @Test
     fun `test initial setup sets value`() = runTest {
         val initial = BigDecimal("10.5")
-        brain.setup(initial)
+        val settings = CalculatorSettings(initialValue = initial)
+        brain.setup(settings)
 
-        assertEquals(initial, brain.state.value.input)
+        assertEquals(initial, brain.state.first().input)
     }
 
     @Test

@@ -19,8 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,7 +67,7 @@ fun ActionButton(
                 haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                 onClick(symbol)
             }
-            .semantics { contentDescription = symbol.name },
+            .testTag(symbol.type)
 
         ) {
         BasicText(
