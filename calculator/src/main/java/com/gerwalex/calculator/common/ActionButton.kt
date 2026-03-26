@@ -89,7 +89,7 @@ private fun CalculatorActionButtonDialog() {
     val settings = rememberCalculatorSettings {
         numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN)
         initialValue = BigDecimal(12345)
-        expressionShown = true
+        isExpressionShown = true
     }
     val state = UICalculateState(
         pendingValue = BigDecimal(456),

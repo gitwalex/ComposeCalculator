@@ -21,11 +21,11 @@ class CalculatorSettings(
     val numberFormat: NumberFormat = NumberFormat.getNumberInstance(),
     val minValue: BigDecimal = BigDecimal("-1e10"),
     val maxValue: BigDecimal = BigDecimal("1e10"),
-    val expressionShown: Boolean = false,
-    val expressionEditable: Boolean = false,
-    val zeroShownWhenNoValue: Boolean = true,
-    val answerBtnShown: Boolean = false,
-    val signBtnShown: Boolean = true,
+    val isExpressionShown: Boolean = false,
+    val isExpressionEditable: Boolean = false,
+    val isZeroShownWhenNoValue: Boolean = true,
+    val isAnswerBtnShown: Boolean = false,
+    val isSignBtnShown: Boolean = true,
     val shouldEvaluateOnOperation: Boolean = true,
     val orderOfOperationsApplied: Boolean = true,
     val locale: Locale = Locale.getDefault(),
@@ -36,11 +36,11 @@ class CalculatorSettings(
         var numberFormat: NumberFormat = NumberFormat.getNumberInstance()
         var minValue: BigDecimal = BigDecimal("-1e10")
         var maxValue: BigDecimal = BigDecimal("1e10")
-        var expressionShown: Boolean = false
-        var expressionEditable: Boolean = false
-        var zeroShownWhenNoValue: Boolean = true
-        var answerBtnShown: Boolean = false
-        var signBtnShown: Boolean = true
+        var isExpressionShown: Boolean = false
+        var isExpressionEditable: Boolean = false
+        var isZeroShownWhenNoValue: Boolean = true
+        var isAnswerBtnShown: Boolean = false
+        var isSignBtnShown: Boolean = true
         var shouldEvaluateOnOperation: Boolean = true
         var orderOfOperationsApplied: Boolean = true
         val locale: Locale = Locale.getDefault()
@@ -48,8 +48,8 @@ class CalculatorSettings(
         fun build(): CalculatorSettings {
             return CalculatorSettings(
                 initialValue, numberFormat, minValue, maxValue,
-                expressionShown, expressionEditable, zeroShownWhenNoValue,
-                answerBtnShown, signBtnShown, shouldEvaluateOnOperation,
+                isExpressionShown, isExpressionEditable, isZeroShownWhenNoValue,
+                isAnswerBtnShown, isSignBtnShown, shouldEvaluateOnOperation,
                 orderOfOperationsApplied, locale
             )
         }
