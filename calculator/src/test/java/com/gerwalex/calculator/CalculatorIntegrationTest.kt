@@ -2,6 +2,8 @@ package com.gerwalex.calculator
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -76,6 +78,9 @@ class CalculatorIntegrationTest : CalculatorTest() {
         // Nochmal Backspace -> Laut deiner Logik sollte jetzt wieder "12" dastehen
         composeTestRule.onNodeWithTag("⌫").performClick()
 
-        composeTestRule.onNodeWithTag("12").assertExists()
+        composeTestRule.onNodeWithTag("Input")
+            .assertIsDisplayed()
+            .assertTextEquals("12")
+
     }
 }

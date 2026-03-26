@@ -22,7 +22,12 @@ class CalculatorBrain : ViewModel() {
 
     fun setup(settings: CalculatorSettings) {
         if (!initialized) {
-            _state.update { it.copy(settings = settings) }
+            _state.update {
+                it.copy(
+                    settings = settings,
+                    inputString = settings.initialValue.toPlainString()
+                )
+            }
             initialized = true
         }
     }
