@@ -68,7 +68,7 @@ fun NumberButton(
             }
             .testTag(symbol.type)
 
-        ) {
+    ) {
         BasicText(
             modifier = Modifier.align(Alignment.Center),
             style = TextStyle(

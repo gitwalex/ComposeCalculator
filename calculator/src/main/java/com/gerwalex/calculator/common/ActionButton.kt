@@ -69,7 +69,7 @@ fun ActionButton(
             }
             .testTag(symbol.type)
 
-        ) {
+    ) {
         BasicText(
             modifier = Modifier.align(Alignment.Center),
             style = TextStyle(
