@@ -82,25 +82,25 @@ fun CalculatorLayout(
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
                 ActionButtonType.ClearInput,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
                 ActionButtonType.ToggleSign,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
-                ActionButtonType.Divide,
+                ActionButtonType.BackSpace,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
         }
 
         // Zeile 2: 7, 8, 9, X
@@ -110,25 +110,25 @@ fun CalculatorLayout(
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Eight,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Nine,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
-                ActionButtonType.Multiply,
+                ActionButtonType.Divide,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
         }
         CalculatorRow {
             NumberButton(
@@ -136,25 +136,25 @@ fun CalculatorLayout(
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Five,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Six,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
-                ActionButtonType.Subtract,
+                ActionButtonType.Multiply,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
         }
         CalculatorRow {
             NumberButton(
@@ -162,25 +162,25 @@ fun CalculatorLayout(
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Two,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Three,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
-                ActionButtonType.Add,
+                ActionButtonType.Subtract,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
         }
 
         CalculatorRow {
@@ -189,41 +189,27 @@ fun CalculatorLayout(
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Period,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
-            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
-            ActionButton(
-                ActionButtonType.ToggleSign,
-                Modifier.weight(1f),
-                buttonColor = buttonColor,
-                colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
-            ActionButton(
-                ActionButtonType.BackSpace,
-                Modifier.weight(1f),
-                buttonColor = buttonColor,
-                colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
-        }
-
-        CalculatorRow {
-            ActionButton(
-                ActionButtonType.Delete,
-                Modifier.weight(1f),
-                buttonColor = buttonColor,
-                colorFont = colorFont,
-            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
+            ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
                 ActionButtonType.Evaluate,
                 Modifier.weight(1f),
                 buttonColor = buttonColor,
                 colorFont = colorFont,
             ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
+            ActionButton(
+                ActionButtonType.Add,
+                Modifier.weight(1f),
+                buttonColor = buttonColor,
+                colorFont = colorFont,
+            ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
         }
+
     }
 }
 
