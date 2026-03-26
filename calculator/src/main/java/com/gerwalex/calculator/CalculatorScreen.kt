@@ -4,6 +4,7 @@ package com.gerwalex.calculator
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.BasicAlertDialog
@@ -33,7 +34,7 @@ import java.math.BigDecimal
 @Composable
 fun CalculatorDialog(
     modifier: Modifier = Modifier,
-    initialValue: BigDecimal = BigDecimal.ZERO,
+    settings: CalculatorSettings = CalculatorSettings(),
     properties: DialogProperties = DialogProperties(),
     onResult: (BigDecimal) -> Unit,
     onDismissRequest: () -> Unit,
@@ -41,7 +42,7 @@ fun CalculatorDialog(
     val brain: CalculatorBrain = viewModel()
     val state by brain.state.collectAsStateWithLifecycle()
     LaunchedEffect(brain) {
-        brain.setup(initialValue)
+        brain.setup(settings)
     }
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
@@ -66,13 +67,14 @@ fun CalculatorDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        Spacer(modifier = Modifier.weight(1f))
+                        TextButton(onClick = { onDismissRequest() }) {
+                            Text("Abbrechen")
+                        }
                         TextButton(onClick = { onResult(state.input) }) {
                             Text("Speichern")
                         }
 
-                        TextButton(onClick = { onDismissRequest() }) {
-                            Text("Abbrechen")
-                        }
                     }
                 }
             }
@@ -100,9 +102,10 @@ private fun CalculateScreen() {
 @Preview
 @Composable
 private fun CalculateDialog() {
+    val settings = CalculatorSettings(initialValue = BigDecimal(12345))
     CalculatorDialog(
         modifier = Modifier.fillMaxWidth(),
-        initialValue = BigDecimal(12345),
+        settings = settings,
         onResult = {},
         onDismissRequest = {}
 

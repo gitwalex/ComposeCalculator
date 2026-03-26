@@ -28,7 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gerwalex.calculator.CalculatorLayout
 import com.gerwalex.calculator.arithmatic.UICalculateState
+import com.gerwalex.calculator.rememberCalculatorSettings
 import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.Locale
 
 enum class ActionButtonType(val type: String) {
     Add("+"),
@@ -84,10 +87,15 @@ fun ActionButton(
 @Preview
 @Composable
 private fun CalculatorActionButtonDialog() {
+    val settings = rememberCalculatorSettings {
+        numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN)
+        initialValue = BigDecimal(12345)
+        expressionShown = true
+    }
     val state = UICalculateState(
-        inputString = "123",
         pendingValue = BigDecimal(456),
-        pendingOperation = ActionButtonType.Add
+        pendingOperation = ActionButtonType.Add,
+        settings = settings,
     )
 
     Surface {

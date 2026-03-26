@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.gerwalex.calculator.CalculatorDialog
+import com.gerwalex.calculator.CalculatorSettings
 import com.gerwalex.calculator.ui.theme.CalculatorAppTheme
 import java.math.BigDecimal
 
@@ -38,9 +39,10 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { openDialog = true }) {
                                 Text("Open Dialog")
                             }
+                            val settings = CalculatorSettings(initialValue = BigDecimal(123))
                             if (openDialog) {
                                 CalculatorDialog(
-                                    initialValue = BigDecimal(123),
+                                    settings = settings,
                                     onResult = {},
                                     onDismissRequest = { openDialog = false })
                             }

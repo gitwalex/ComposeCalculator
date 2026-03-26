@@ -64,7 +64,7 @@ fun CalculatorLayout(
             )
 
             Text(
-                text = state.inputString,
+                text = state.formattedResult,
                 color = buttonColor,
                 fontSize = 45.sp,
                 fontWeight = FontWeight.Bold,

@@ -1,6 +1,7 @@
 package com.gerwalex.calculator.arithmatic
 
 import androidx.lifecycle.ViewModel
+import com.gerwalex.calculator.CalculatorSettings
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.common.NumberButtonType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +12,7 @@ import java.math.BigDecimal
 
 class CalculatorBrain : ViewModel() {
 
-    private var isInitailized = false
+    private var initialized = false
 
     // Interner MutableStateFlow
     private val _state = MutableStateFlow(UICalculateState())
@@ -19,10 +20,10 @@ class CalculatorBrain : ViewModel() {
     // Externer schreibgeschützter Flow für die UI
     val state: StateFlow<UICalculateState> = _state.asStateFlow()
 
-    fun setup(initialValue: BigDecimal) {
-        if (!isInitailized) {
-            _state.update { it.copy(inputString = initialValue.toPlainString()) }
-            isInitailized = true
+    fun setup(settings: CalculatorSettings) {
+        if (!initialized) {
+            _state.update { it.copy(settings = settings) }
+            initialized = true
         }
     }
 
