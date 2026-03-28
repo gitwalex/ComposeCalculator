@@ -1,6 +1,8 @@
 package com.gerwalex.calculator
 
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +28,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gerwalex.calculator.arithmatic.CalculatorBrain
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import com.gerwalex.calculator.common.ActionButtonType
-import com.gerwalex.calculator.ui.component.myColors
+import com.gerwalex.calculator.ui.theme.CalculatorAppTheme
+import com.gerwalex.calculator.ui.theme.CalculatorStyle
+import com.gerwalex.calculator.ui.theme.CalculatorThemeDefaults
 import java.math.BigDecimal
 
 
@@ -35,6 +39,7 @@ import java.math.BigDecimal
 fun CalculatorDialog(
     modifier: Modifier = Modifier,
     settings: CalculatorSettings = CalculatorSettings(),
+    colors: CalculatorStyle = CalculatorThemeDefaults.defaultColors(),
     properties: DialogProperties = DialogProperties(),
     onResult: (BigDecimal) -> Unit,
     onDismissRequest: () -> Unit,
@@ -51,9 +56,8 @@ fun CalculatorDialog(
         content = {
             Surface(
                 shape = MaterialTheme.shapes.extraLarge,
-                tonalElevation = 6.dp, // M3 Effekt für Tiefe
-                color = MaterialTheme.myColors.backgroundColor, // <--- DEIN HINTERGRUND
-                contentColor = MaterialTheme.myColors.fontColorPurple // Standard-Textfarbe
+                tonalElevation = 6.dp,
+                color = colors.backgroundColor,
             ) {
                 Column(
                     modifier = Modifier.widthIn(max = 500.dp),
@@ -61,6 +65,7 @@ fun CalculatorDialog(
                 ) {
                     CalculatorLayout(
                         state = state,
+                        colors = colors,
                         onAction = { brain.onAction(it) },
                         onNumber = { brain.onNumberAction(it) })
                     Row(
@@ -83,7 +88,7 @@ fun CalculatorDialog(
 
 @Preview
 @Composable
-private fun CalculateScreen() {
+fun CalculatorScreenPreview() {
     val state = UICalculateState(
         inputString = "123",
         pendingValue = BigDecimal(456),
@@ -93,21 +98,25 @@ private fun CalculateScreen() {
     Surface {
         CalculatorLayout(
             state = state,
+            colors = CalculatorThemeDefaults.defaultColors(),
             onAction = {},
             onNumber = {}
         )
     }
 }
 
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_NO, name = "Dialog-Day")
+@Preview(uiMode = UI_MODE_NIGHT_YES, name = "Dialog-Night")
 @Composable
 private fun CalculateDialog() {
-    val settings = CalculatorSettings(initialValue = BigDecimal(12345))
-    CalculatorDialog(
-        modifier = Modifier.fillMaxWidth(),
-        settings = settings,
-        onResult = {},
-        onDismissRequest = {}
+    CalculatorAppTheme {
+        val settings = CalculatorSettings(initialValue = BigDecimal(12345))
+        CalculatorDialog(
+            modifier = Modifier.fillMaxWidth(),
+            settings = settings,
+            onResult = {},
+            onDismissRequest = {}
 
-    )
+        )
+    }
 }

@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
     manifest = Config.NONE, // Falls du kein spezielles Manifest brauchst
 )
 
-open class CalculatorTest {
+abstract class CalculatorTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
