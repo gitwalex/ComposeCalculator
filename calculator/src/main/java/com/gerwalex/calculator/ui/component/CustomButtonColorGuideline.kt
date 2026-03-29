@@ -1,11 +1,7 @@
 package com.gerwalex.calculator.ui.component
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
-import com.gerwalex.calculator.ui.theme.LocalColors
 
 
 data class CustomButtonColorGuideline(
@@ -19,7 +15,3 @@ data class CustomButtonColorGuideline(
     val fontColorPurple: Color
 )
 
-val MaterialTheme.myColors: CustomButtonColorGuideline
-    @Composable
-    @ReadOnlyComposable
-    get() = LocalColors.current

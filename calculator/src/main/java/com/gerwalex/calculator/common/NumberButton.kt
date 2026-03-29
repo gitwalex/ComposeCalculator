@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.gerwalex.calculator.CalculatorLayout
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import com.gerwalex.calculator.ui.theme.CalculatorStyle
-import com.gerwalex.calculator.ui.theme.CalculatorThemeDefaults
+import com.gerwalex.calculator.ui.theme.CalculatorStyleDefaults
 import java.math.BigDecimal
 
 enum class NumberButtonType(val type: String) {
@@ -79,7 +79,7 @@ private fun CalculatorNumberButtonDialog() {
     Surface {
         CalculatorLayout(
             state = state,
-            colors = CalculatorThemeDefaults.defaultColors(),
+            colors = CalculatorStyleDefaults.defaultColors(),
             onAction = {},
             onNumber = {}
         )
@@ -89,5 +89,5 @@ private fun CalculatorNumberButtonDialog() {
 @Preview(showBackground = true)
 @Composable
 fun ButtonPreview() {
-    NumberButton(symbol = NumberButtonType.One, CalculatorThemeDefaults.defaultColors()) {}
+    NumberButton(symbol = NumberButtonType.One, CalculatorStyleDefaults.defaultColors()) {}
 }

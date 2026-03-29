@@ -20,7 +20,7 @@ import com.gerwalex.calculator.CalculatorLayout
 import com.gerwalex.calculator.arithmatic.UICalculateState
 import com.gerwalex.calculator.rememberCalculatorSettings
 import com.gerwalex.calculator.ui.theme.CalculatorStyle
-import com.gerwalex.calculator.ui.theme.CalculatorThemeDefaults
+import com.gerwalex.calculator.ui.theme.CalculatorStyleDefaults
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Locale
@@ -73,7 +73,6 @@ private fun CalculatorActionButtonDialog() {
     val settings = rememberCalculatorSettings {
         numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN)
         initialValue = BigDecimal(12345)
-        isExpressionShown = true
     }
     val state = UICalculateState(
         pendingValue = BigDecimal(456),
@@ -84,7 +83,7 @@ private fun CalculatorActionButtonDialog() {
     Surface {
         CalculatorLayout(
             state = state,
-            colors = CalculatorThemeDefaults.defaultColors(),
+            colors = CalculatorStyleDefaults.defaultColors(),
             onAction = {},
             onNumber = {}
         )
@@ -97,7 +96,7 @@ private fun ActionButtonAdd() {
     MaterialTheme {
         ActionButton(
             symbol = ActionButtonType.Add,
-            colors = CalculatorThemeDefaults.defaultColors()
+            colors = CalculatorStyleDefaults.defaultColors()
         ) {}
     }
 }
@@ -108,7 +107,7 @@ private fun ActionButtonMultiply() {
     MaterialTheme {
         ActionButton(
             symbol = ActionButtonType.Multiply,
-            colors = CalculatorThemeDefaults.defaultColors()
+            colors = CalculatorStyleDefaults.defaultColors()
         ) {}
     }
 }
@@ -119,7 +118,7 @@ private fun ActionButtonToggle() {
     MaterialTheme {
         ActionButton(
             symbol = ActionButtonType.ToggleSign,
-            colors = CalculatorThemeDefaults.defaultColors()
+            colors = CalculatorStyleDefaults.defaultColors()
         ) {}
     }
 }

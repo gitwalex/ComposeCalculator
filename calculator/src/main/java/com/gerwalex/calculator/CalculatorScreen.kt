@@ -30,17 +30,28 @@ import com.gerwalex.calculator.arithmatic.UICalculateState
 import com.gerwalex.calculator.common.ActionButtonType
 import com.gerwalex.calculator.ui.theme.CalculatorAppTheme
 import com.gerwalex.calculator.ui.theme.CalculatorStyle
-import com.gerwalex.calculator.ui.theme.CalculatorThemeDefaults
+import com.gerwalex.calculator.ui.theme.CalculatorStyleDefaults
 import java.math.BigDecimal
 
 
+/**
+ * A dialog-based calculator that allows users to perform arithmetic operations and return a result.
+ *
+ * @param modifier The [Modifier] to be applied to the dialog.
+ * @param settings Configuration settings for the calculator, such as initial values and precision.
+ * @param colors The [CalculatorStyle] defining the color scheme for the calculator UI.
+ * @param properties [DialogProperties] for further customization of the dialog's behavior.
+ * @param onResult Callback invoked when the user confirms the calculation (e.g., clicks "Speichern"),
+ * providing the resulting [BigDecimal].
+ * @param onDismissRequest Callback invoked when the user requests to dismiss the dialog (e.g., clicks "Abbrechen").
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculatorDialog(
     modifier: Modifier = Modifier,
     settings: CalculatorSettings = CalculatorSettings(),
-    colors: CalculatorStyle = CalculatorThemeDefaults.defaultColors(),
-    properties: DialogProperties = DialogProperties(),
+    colors: CalculatorStyle = CalculatorStyleDefaults.defaultColors(),
+    properties: DialogProperties = DialogProperties(dismissOnClickOutside = false),
     onResult: (BigDecimal) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
@@ -98,7 +109,7 @@ fun CalculatorScreenPreview() {
     Surface {
         CalculatorLayout(
             state = state,
-            colors = CalculatorThemeDefaults.defaultColors(),
+            colors = CalculatorStyleDefaults.defaultColors(),
             onAction = {},
             onNumber = {}
         )

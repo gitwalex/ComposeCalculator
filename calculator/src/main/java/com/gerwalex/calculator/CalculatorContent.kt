@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,8 +28,8 @@ import com.gerwalex.calculator.ui.theme.CalculatorStyle
 @Composable
 fun CalculatorLayout(
     state: UICalculateState,
-    modifier: Modifier = Modifier,
     colors: CalculatorStyle,
+    modifier: Modifier = Modifier,
     onAction: (ActionButtonType) -> Unit,
     onNumber: (NumberButtonType) -> Unit,
 
@@ -55,9 +54,8 @@ fun CalculatorLayout(
                         ""
                     else
                         "${state.pendingMemory} ${state.pendingOperation.type}",
-                color = colors.displayBackgroundColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Black,
+                style = colors.displayTextStyle.copy(fontSize = 24.sp),
+                textAlign = TextAlign.End,
                 modifier = Modifier.testTag("PendingAction")
             )
 
@@ -85,6 +83,7 @@ fun CalculatorLayout(
                 ActionButtonType.ToggleSign,
                 Modifier.weight(1f),
                 colors = colors,
+                enabled = state.settings.isSignBtnShown
             ) { onAction(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             ActionButton(
                 ActionButtonType.BackSpace,
@@ -164,8 +163,9 @@ fun CalculatorLayout(
         CalculatorRow {
             NumberButton(
                 NumberButtonType.Zero,
+                enabled = state.inputString != "0",
                 colors = colors,
-                Modifier.weight(1f),
+                modifier = Modifier.weight(1f),
             ) { onNumber(it); haptic.performHapticFeedback(HapticFeedbackType.Confirm) }
             NumberButton(
                 NumberButtonType.Period,

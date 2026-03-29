@@ -19,7 +19,7 @@ data class CalculatorStyle(
     val displayTextStyle: TextStyle,
 )
 
-object CalculatorThemeDefaults {
+object CalculatorStyleDefaults {
     @Composable
     fun defaultColors() = CalculatorStyle(
         backgroundColor = MaterialTheme.colorScheme.surface,

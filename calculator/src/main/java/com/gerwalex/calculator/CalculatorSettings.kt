@@ -16,41 +16,37 @@ fun rememberCalculatorSettings(
 }
 
 
-class CalculatorSettings(
+data class CalculatorSettings(
     val initialValue: BigDecimal = BigDecimal.ZERO,
-    val numberFormat: NumberFormat = NumberFormat.getNumberInstance(),
-    val minValue: BigDecimal = BigDecimal("-1e10"),
-    val maxValue: BigDecimal = BigDecimal("1e10"),
-    val isExpressionShown: Boolean = false,
-    val isExpressionEditable: Boolean = false,
-    val isZeroShownWhenNoValue: Boolean = true,
-    val isAnswerBtnShown: Boolean = false,
+    val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.getDefault()),
     val isSignBtnShown: Boolean = true,
-    val shouldEvaluateOnOperation: Boolean = true,
-    val orderOfOperationsApplied: Boolean = true,
-    val locale: Locale = Locale.getDefault(),
-//    val numpadLayout = CalcNumpadLayout.CALCULATOR, {
+//    val minValue: BigDecimal = BigDecimal("-1e10"),
+//    val maxValue: BigDecimal = BigDecimal("1e10"),
+//    val isExpressionShown: Boolean = false,
+//    val isExpressionEditable: Boolean = false,
+//    val isAnswerBtnShown: Boolean = false,
+//    val shouldEvaluateOnOperation: Boolean = true,
+//    val orderOfOperationsApplied: Boolean = true,
 ) {
     class Builder {
         var initialValue: BigDecimal = BigDecimal.ZERO
         var numberFormat: NumberFormat = NumberFormat.getNumberInstance()
-        var minValue: BigDecimal = BigDecimal("-1e10")
-        var maxValue: BigDecimal = BigDecimal("1e10")
-        var isExpressionShown: Boolean = false
-        var isExpressionEditable: Boolean = false
-        var isZeroShownWhenNoValue: Boolean = true
-        var isAnswerBtnShown: Boolean = false
         var isSignBtnShown: Boolean = true
-        var shouldEvaluateOnOperation: Boolean = true
-        var orderOfOperationsApplied: Boolean = true
-        val locale: Locale = Locale.getDefault()
+//        var minValue: BigDecimal = BigDecimal("-1e10")
+//        var maxValue: BigDecimal = BigDecimal("1e10")
+//        var isExpressionShown: Boolean = false
+//        var isExpressionEditable: Boolean = false
+//        var isAnswerBtnShown: Boolean = false
+//        var shouldEvaluateOnOperation: Boolean = true
+//        var orderOfOperationsApplied: Boolean = true
 
         fun build(): CalculatorSettings {
             return CalculatorSettings(
-                initialValue, numberFormat, minValue, maxValue,
-                isExpressionShown, isExpressionEditable, isZeroShownWhenNoValue,
-                isAnswerBtnShown, isSignBtnShown, shouldEvaluateOnOperation,
-                orderOfOperationsApplied, locale
+                initialValue, numberFormat, isSignBtnShown,
+//                minValue, maxValue,
+//                isExpressionShown, isExpressionEditable,
+//                isAnswerBtnShown, shouldEvaluateOnOperation,
+//                orderOfOperationsApplied
             )
         }
     }

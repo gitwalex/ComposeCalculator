@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.gerwalex.calculator.arithmatic.CalculatorBrain
+import com.gerwalex.calculator.ui.theme.CalculatorStyleDefaults
 import org.junit.Test
 
 class CalculatorIntegrationTest : CalculatorTest() {
@@ -23,6 +24,7 @@ class CalculatorIntegrationTest : CalculatorTest() {
 
             CalculatorLayout(
                 state = state,
+                colors = CalculatorStyleDefaults.defaultColors(),
                 onAction = { brain.onAction(it) },
                 onNumber = { brain.onNumberAction(it) }
             )
@@ -59,6 +61,7 @@ class CalculatorIntegrationTest : CalculatorTest() {
 
             CalculatorLayout(
                 state = state,
+                colors = CalculatorStyleDefaults.defaultColors(),
                 onAction = { brain.onAction(it) },
                 onNumber = { brain.onNumberAction(it) }
             )
